@@ -17,7 +17,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'tpope/vim-rails'
-Plug 'flazz/vim-colorschemes'
+Plug 'jacoborus/tender.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'Yggdroot/indentLine'
 Plug 'tpope/vim-surround'
@@ -28,6 +28,7 @@ Plug 'elixir-lang/vim-elixir'
 Plug 'janko-m/vim-test'
 Plug 'junegunn/vim-easy-align'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 Plug 'matze/vim-move'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -73,7 +74,10 @@ set background=dark
 set textwidth=80
 set relativenumber
 set bs=2 tabstop=2 shiftwidth=2 softtabstop=2
-colorscheme bubblegum
+colorscheme tender
+if (has("termguicolors"))
+ set termguicolors
+endif
 " Fix iterm display
 let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
 let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
@@ -82,13 +86,14 @@ let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 "========================================================
 " CONFIG AIRLINE
 "========================================================
-let g:Powerline_symbols = 'fancy'
-let g:airline_powerline_fonts = 1
+" let g:Powerline_symbols = 'fancy'
+" let g:airline_powerline_fonts = 1
 let g:airline_symbols = {}
 if !exists('g:airline_symbols')
 endif
 let g:airline_symbols.space = "\ua0"
 let s:spc = g:airline_symbols.space
+let g:airline_theme = 'tender'
 function! AirlineInit()
   let g:airline_section_a = airline#section#create(['%{toupper(mode())}'])
   let g:airline_section_b = airline#section#create([''])
@@ -100,6 +105,9 @@ endfunction
 let g:ale_fixers = {
 \ 'ruby': ['rubocop']
 \ }
+let g:ale_linters = {
+\   'javascript': ['eslint'],
+\}
 let g:ale_lint_on_text_changed="never"
 let g:airline#extensions#ale#enabled = 1
 let g:ale_echo_msg_error_str = 'E'
@@ -148,11 +156,16 @@ endfunction "}}}
 "========================================================
 " CONFIG GITGUTTER
 "========================================================
-let g:gitgutter_sign_added = '+'
-let g:gitgutter_sign_modified = '*'
-let g:gitgutter_sign_removed = '-'
-let g:gitgutter_sign_removed_first_line = '-'
-let g:gitgutter_sign_modified_removed = '_'
+" let g:gitgutter_sign_added = '+'
+" let g:gitgutter_sign_modified = '*'
+" let g:gitgutter_sign_removed = '-'
+" let g:gitgutter_sign_removed_first_line = '-'
+" let g:gitgutter_sign_modified_removed = '_'
+let g:gitgutter_sign_added = '·'
+let g:gitgutter_sign_modified = '·'
+let g:gitgutter_sign_removed = '·'
+let g:gitgutter_sign_removed_first_line = '·'
+let g:gitgutter_sign_modified_removed = '·'
 "========================================================
 " CONFIG MISC
 "========================================================
@@ -173,7 +186,6 @@ if has("autocmd")
   autocmd FileType go set tabstop=8 shiftwidth=8 softtabstop=8
   autocmd FileType xml set equalprg=xmllint\ --format\ -
   autocmd VimEnter * call AirlineInit()
-  autocmd VimEnter * AirlineTheme bubblegum
   autocmd BufWritePre * StripWhitespace
   autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
   autocmd FileType markdown set textwidth=80
