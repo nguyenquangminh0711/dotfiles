@@ -37,11 +37,13 @@ Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
 Plug 'zchee/deoplete-go', { 'do': 'make'}
+Plug 'zchee/deoplete-clang'
 Plug 'w0rp/ale'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'carlitux/deoplete-ternjs'
 Plug 'fatih/vim-go'
+Plug 'majutsushi/tagbar'
 call plug#end()
 syntax on
 filetype on
@@ -260,7 +262,7 @@ let g:EasyMotion_do_mapping = 0
 let g:EasyMotion_smartcase = 1
 map / <Plug>(easymotion-sn)
 omap / <Plug>(easymotion-tn)
-nmap <silent> <tab> <Plug>(easymotion-w)
+nmap <silent> <tab> <Plug>(easymotion-overwin-w)
 "========================================================
 " MAPPING EASYALIGN
 "========================================================
@@ -298,3 +300,6 @@ noremap <silent> <expr> $ (v:count == 0 ? 'g$' : '^')
 if has("nvim")
   tnoremap <c-e> <C-\><C-n>
 end
+nmap <silent> <leader>t :TagbarToggle<CR>
+let g:deoplete#sources#clang#libclang_path = '/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
+let g:deoplete#sources#clang#clang_header = '/usr/local/opt/llvm/lib/clang'
