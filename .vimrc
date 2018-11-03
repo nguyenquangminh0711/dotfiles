@@ -1,6 +1,5 @@
 "========================================================
 " INSTALL PLUGINS
-"
 "========================================================
 function! DoRemote(arg)
   UpdateRemotePlugins
@@ -16,20 +15,15 @@ Plug 'easymotion/vim-easymotion'
 Plug 'airblade/vim-gitgutter'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'ntpeters/vim-better-whitespace'
-Plug 'tpope/vim-rails'
 Plug 'jacoborus/tender.vim'
 Plug 'jiangmiao/auto-pairs'
-Plug 'Yggdroot/indentLine'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-endwise'
 Plug 'mbbill/undotree'
 Plug 'ryanoasis/vim-devicons'
-Plug 'elixir-lang/vim-elixir'
 Plug 'janko-m/vim-test'
 Plug 'junegunn/vim-easy-align'
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-rhubarb'
-Plug 'matze/vim-move'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'vim-scripts/git-time-lapse'
@@ -39,12 +33,15 @@ Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
 Plug 'zchee/deoplete-go', { 'do': 'make'}
 Plug 'zchee/deoplete-clang'
 Plug 'w0rp/ale'
-Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
-Plug 'carlitux/deoplete-ternjs'
 Plug 'fatih/vim-go'
-Plug 'majutsushi/tagbar'
+Plug 'mrkn/vim-cruby'
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'brooth/far.vim'
+Plug 'kristijanhusak/vim-carbon-now-sh'
 call plug#end()
+"========================================================
+" EDITOR CONFIGS
+"========================================================
 syntax on
 filetype on
 filetype indent on
@@ -55,13 +52,11 @@ set ruler
 set linespace=1
 set gfn=DejaVu\ Sans\ Mono\ for\ Powerline:h13
 let g:auto_ctags = 1
-set wrap linebreak nolist
 set breakindent
 set nofoldenable
 set tags=./tags;,tags;
 set ruler
 set number
-set wrap linebreak nolist
 set expandtab
 set autoindent
 set clipboard=unnamed
@@ -74,7 +69,6 @@ set encoding=utf8
 set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Plus\ Nerd\ File\ Types:h11
 set background=dark
 set textwidth=80
-set relativenumber
 set bs=2 tabstop=2 shiftwidth=2 softtabstop=2
 colorscheme tender
 if (has("termguicolors"))
@@ -88,8 +82,6 @@ let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
 "========================================================
 " CONFIG AIRLINE
 "========================================================
-" let g:Powerline_symbols = 'fancy'
-" let g:airline_powerline_fonts = 1
 let g:airline_symbols = {}
 if !exists('g:airline_symbols')
 endif
@@ -109,7 +101,9 @@ let g:ale_fixers = {
 \ }
 let g:ale_linters = {
 \   'javascript': ['eslint'],
+\   'c': ["clang"],
 \}
+let g:ale_c_clang_options = '-std=c11 -Wall -I/Users/dark_wing0711/www/ruby -I/Users/dark_wing0711/www/ruby/include -I/Users/dark_wing0711/www/ruby/.ext/include/x86_64-darwin16'
 let g:ale_lint_on_text_changed="never"
 let g:airline#extensions#ale#enabled = 1
 let g:ale_echo_msg_error_str = 'E'
@@ -189,10 +183,6 @@ if has("autocmd")
   autocmd FileType xml set equalprg=xmllint\ --format\ -
   autocmd VimEnter * call AirlineInit()
   autocmd BufWritePre * StripWhitespace
-  autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
-  autocmd FileType markdown set textwidth=80
-  autocmd FileType markdown set formatoptions-=t
-  autocmd Filetype cpp setlocal ts=4 sw=4 sts=0 expandtab
 endif
 let g:webdevicons_enable_ctrlp = 1
 let g:move_key_modifier = 'C'
@@ -200,46 +190,15 @@ let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.html.eex,*.html.erb"
 let g:jsx_ext_required = 0
 let g:fzf_tags_command = 'ctags -R --exclude=.git --exclude=node_modules'
 let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git --ignore node_modules -l -g ""'
-"========================================================
-" FUNCTIONS
-"========================================================
-" Update ruby ctags
-function! URT()
-  return system('ctags -R --languages=ruby --exclude=.git --exclude=log . $(bundle list --paths)')
-endfunction
-function! UET()
-  return system('ctags -R --languages=elixir --exclude=.git --exclude=log .')
-endfunction
-" Toogle indents
-function! IndentGuideToggle()
-  let g:indent_guide_displayed = get(g:, 'indent_guide_displayed', '0')
-  if g:indent_guide_displayed=='0'
-    let g:indent_guide_displayed = '1'
-    execute 'IndentLinesEnable'
-    set colorcolumn=+1
-  else
-    let g:indent_guide_displayed = '0'
-    execute 'IndentLinesDisable'
-    set colorcolumn=0
-  endif
-endfunction
-function! NumberToggle()
-  if(&relativenumber == 1)
-    set number
-  else
-    set relativenumber
-  endif
-endfunc
+let g:fzf_preview_source=" --preview='bat {}'"
 "========================================================
 " MAPPING FZF
 "========================================================
-map <c-p> <ESC>:Files<CR>
-map <c-o> <ESC>:Tags<CR>
-map <c-h> <ESC>:History<CR>
+map <c-p> <ESC>:call fzf#vim#files('.', {'options': g:fzf_preview_source})<CR>
+map <silent> <leader>m <ESC>:Marks<CR>
 map <silent> <leader>/ <ESC>:BLines<CR>
 map <leader>ag <ESC>:Ag<space>
-map <c-]> <ESC>:call fzf#vim#tags(expand("<cword>"), fzf#vim#layout(expand("<bang>0")))<cr>
-map <silent> <leader>mm <ESC>:Commands<CR>
+map <c-]> <ESC>:call fzf#vim#tags(expand("<cword>"), {'options': '--exact'})<cr>
 "========================================================
 " MAPPING NERDTree
 "========================================================
@@ -271,24 +230,20 @@ nmap ga <Plug>(EasyAlign)
 "========================================================
 " MAPPING GIT
 "========================================================
-map <silent> gb :Gblame<CR>
-map <silent> ghub :Gbrowse<CR>
-map <silent> gt :call TimeLapse() <cr>
+map <silent> <leader>gt :call TimeLapse() <cr>
 "========================================================
 " MAPPING MISC
 "========================================================
-map <silent> <leader>urt <ESC>:call URT()<CR>
-map <silent> <leader>uet <ESC>:call UET()<CR>
 nnoremap <silent> <CR> <ESC>:noh<CR>
-map <silent> <leader>i <ESC>:call IndentGuideToggle()<CR>
 map <silent> <leader>' cs'"
 map <silent> <leader>" cs"'
 map <silent> <leader><leader> <C-^><CR>
 map <silent> <leader>u :UndotreeToggle<CR>
-map <silent> <space>h <C-W><C-H>
-map <silent> <space>j <C-W><C-J>
-map <silent> <space>k <C-W><C-K>
-map <silent> <space>l <C-W><C-L>
+map <silent> <C-h> <ESC>:TmuxNavigateLeft<CR>
+map <silent> <C-l> <ESC>:TmuxNavigateRight<CR>
+map <silent> <C-k> <ESC>:TmuxNavigateUp<CR>
+map <silent> <C-j> <ESC>:TmuxNavigateDown<CR>
+nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
 map <silent> <leader>path :let @+=@%<CR>
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
 smap <C-k>     <Plug>(neosnippet_expand_or_jump)
@@ -301,5 +256,10 @@ if has("nvim")
   tnoremap <c-e> <C-\><C-n>
 end
 nmap <silent> <leader>t :TagbarToggle<CR>
-let g:deoplete#sources#clang#libclang_path = '/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
-let g:deoplete#sources#clang#clang_header = '/usr/local/opt/llvm/lib/clang'
+nmap <silent> <leader>gb :GoBuild<CR>
+nmap <silent> <leader>gr :GoRun<CR>
+nmap <silent> <leader>gd :GoDeclsDir<CR>
+nmap <silent> <leader>gf :GoDecls<CR>
+"========================================================
+" MACHINE CONFIGS
+"========================================================
