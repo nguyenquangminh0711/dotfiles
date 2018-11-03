@@ -68,7 +68,6 @@ set laststatus=2
 set encoding=utf8
 set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Plus\ Nerd\ File\ Types:h11
 set background=dark
-set textwidth=80
 set bs=2 tabstop=2 shiftwidth=2 softtabstop=2
 colorscheme tender
 if (has("termguicolors"))
@@ -245,9 +244,6 @@ map <silent> <C-k> <ESC>:TmuxNavigateUp<CR>
 map <silent> <C-j> <ESC>:TmuxNavigateDown<CR>
 nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
 map <silent> <leader>path :let @+=@%<CR>
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>     <Plug>(neosnippet_expand_target)
 noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
 noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
 noremap <silent> <expr> ^ (v:count == 0 ? 'g^' : '^')
