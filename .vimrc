@@ -1,18 +1,12 @@
 "========================================================
 " INSTALL PLUGINS
 "========================================================
-function! DoRemote(arg)
-  UpdateRemotePlugins
-endfunction
-
 filetype off
 call plug#begin('~/.vim/plugged')
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+Plug 'itchyny/lightline.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'tomtom/tcomment_vim'
 Plug 'easymotion/vim-easymotion'
-Plug 'airblade/vim-gitgutter'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'jacoborus/tender.vim'
@@ -29,15 +23,17 @@ Plug 'junegunn/fzf.vim'
 Plug 'vim-scripts/git-time-lapse'
 Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
-Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'zchee/deoplete-go', { 'do': 'make'}
 Plug 'zchee/deoplete-clang'
 Plug 'w0rp/ale'
 Plug 'fatih/vim-go'
-Plug 'mrkn/vim-cruby'
+" Plug 'mrkn/vim-cruby'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'brooth/far.vim'
 Plug 'kristijanhusak/vim-carbon-now-sh'
+Plug 'MattesGroeger/vim-bookmarks'
+Plug 'majutsushi/tagbar'
 call plug#end()
 "========================================================
 " EDITOR CONFIGS
@@ -77,21 +73,6 @@ endif
 let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
 let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
 let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
-
-"========================================================
-" CONFIG AIRLINE
-"========================================================
-let g:airline_symbols = {}
-if !exists('g:airline_symbols')
-endif
-let g:airline_symbols.space = "\ua0"
-let s:spc = g:airline_symbols.space
-let g:airline_theme = 'tender'
-function! AirlineInit()
-  let g:airline_section_a = airline#section#create(['%{toupper(mode())}'])
-  let g:airline_section_b = airline#section#create([''])
-  let g:airline_section_z = airline#section#create(['%p%%'])
-endfunction
 "========================================================
 " CONFIG ALE
 "========================================================
@@ -104,15 +85,13 @@ let g:ale_linters = {
 \}
 let g:ale_c_clang_options = '-std=c11 -Wall -I/Users/dark_wing0711/www/ruby -I/Users/dark_wing0711/www/ruby/include -I/Users/dark_wing0711/www/ruby/.ext/include/x86_64-darwin16'
 let g:ale_lint_on_text_changed="never"
-let g:airline#extensions#ale#enabled = 1
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_set_highlights = 0
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
-map <silent> <leader>ln :ALENext<CR>
-map <silent> <leader>lp :ALEPrevious<CR>
+highlight SignColumn guibg=255
 "========================================================
 " CONFIG DEOPLETE
 "========================================================
@@ -149,19 +128,6 @@ let col = col('.') - 1
 return ! col || getline('.')[col - 1] =~? '\s'
 endfunction "}}}
 "========================================================
-" CONFIG GITGUTTER
-"========================================================
-" let g:gitgutter_sign_added = '+'
-" let g:gitgutter_sign_modified = '*'
-" let g:gitgutter_sign_removed = '-'
-" let g:gitgutter_sign_removed_first_line = '-'
-" let g:gitgutter_sign_modified_removed = '_'
-let g:gitgutter_sign_added = '·'
-let g:gitgutter_sign_modified = '·'
-let g:gitgutter_sign_removed = '·'
-let g:gitgutter_sign_removed_first_line = '·'
-let g:gitgutter_sign_modified_removed = '·'
-"========================================================
 " CONFIG MISC
 "========================================================
 " Auto pair
@@ -180,10 +146,8 @@ if has("autocmd")
   autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
   autocmd FileType go set tabstop=8 shiftwidth=8 softtabstop=8
   autocmd FileType xml set equalprg=xmllint\ --format\ -
-  autocmd VimEnter * call AirlineInit()
   autocmd BufWritePre * StripWhitespace
 endif
-let g:webdevicons_enable_ctrlp = 1
 let g:move_key_modifier = 'C'
 let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.html.eex,*.html.erb"
 let g:jsx_ext_required = 0
@@ -194,7 +158,6 @@ let g:fzf_preview_source=" --preview='bat {}'"
 " MAPPING FZF
 "========================================================
 map <c-p> <ESC>:call fzf#vim#files('.', {'options': g:fzf_preview_source})<CR>
-map <silent> <leader>m <ESC>:Marks<CR>
 map <silent> <leader>/ <ESC>:BLines<CR>
 map <leader>ag <ESC>:Ag<space>
 map <c-]> <ESC>:call fzf#vim#tags(expand("<cword>"), {'options': '--exact'})<cr>
@@ -220,7 +183,6 @@ let g:EasyMotion_do_mapping = 0
 let g:EasyMotion_smartcase = 1
 map / <Plug>(easymotion-sn)
 omap / <Plug>(easymotion-tn)
-nmap <silent> <tab> <Plug>(easymotion-overwin-w)
 "========================================================
 " MAPPING EASYALIGN
 "========================================================
@@ -231,12 +193,50 @@ nmap ga <Plug>(EasyAlign)
 "========================================================
 map <silent> <leader>gt :call TimeLapse() <cr>
 "========================================================
+" BOOKMARKS
+"========================================================
+let g:bookmark_save_per_working_dir = 1
+let g:bookmark_highlight_lines = 1
+
+function! BookmarkItem(line)
+  let lnr = split(v:val, ":")
+  return lnr[0].":".lnr[1].":0"."\t".join(lnr[2:], ":")
+endfunction
+function! BookmarksFZF()
+    call fzf#vim#ag('', {'source': map(bm#location_list(), 'BookmarkItem(v:val)'), 'down': '30%', 'options': '--prompt "Bookmarks  >>>  "'})
+endfunction
+let g:bookmark_no_default_key_mappings = 1
+function! BookmarkMapKeys()
+    nmap mm :BookmarkToggle<CR>
+    nmap mi :BookmarkAnnotate<CR>
+    nmap mn :BookmarkNext<CR>
+    nmap mp :BookmarkPrev<CR>
+    nmap ma <ESC>:call BookmarksFZF()<CR>
+    nmap mc :BookmarkClear<CR>
+    nmap mx :BookmarkClearAll<CR>
+    nmap mkk :BookmarkMoveUp
+    nmap mjj :BookmarkMoveDown
+endfunction
+function! BookmarkUnmapKeys()
+    unmap mm
+    unmap mi
+    unmap mn
+    unmap mp
+    unmap ma
+    unmap mc
+    unmap mx
+    unmap mkk
+    unmap mjj
+endfunction
+autocmd BufEnter * :call BookmarkMapKeys()
+autocmd BufEnter NERD_tree_* :call BookmarkUnmapKeys()
+map ma <ESC>:call BookmarksFZF()<CR>
+"========================================================
 " MAPPING MISC
 "========================================================
 nnoremap <silent> <CR> <ESC>:noh<CR>
 map <silent> <leader>' cs'"
 map <silent> <leader>" cs"'
-map <silent> <leader><leader> <C-^><CR>
 map <silent> <leader>u :UndotreeToggle<CR>
 map <silent> <C-h> <ESC>:TmuxNavigateLeft<CR>
 map <silent> <C-l> <ESC>:TmuxNavigateRight<CR>
@@ -252,10 +252,6 @@ if has("nvim")
   tnoremap <c-e> <C-\><C-n>
 end
 nmap <silent> <leader>t :TagbarToggle<CR>
-nmap <silent> <leader>gb :GoBuild<CR>
-nmap <silent> <leader>gr :GoRun<CR>
-nmap <silent> <leader>gd :GoDeclsDir<CR>
-nmap <silent> <leader>gf :GoDecls<CR>
 "========================================================
 " MACHINE CONFIGS
 "========================================================
