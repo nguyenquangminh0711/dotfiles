@@ -28,12 +28,13 @@ Plug 'zchee/deoplete-go', { 'do': 'make'}
 Plug 'zchee/deoplete-clang'
 Plug 'w0rp/ale'
 Plug 'fatih/vim-go'
-" Plug 'mrkn/vim-cruby'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'brooth/far.vim'
 Plug 'kristijanhusak/vim-carbon-now-sh'
 Plug 'MattesGroeger/vim-bookmarks'
 Plug 'majutsushi/tagbar'
+Plug 'mhinz/vim-startify'
+Plug 'mhinz/vim-signify'
 call plug#end()
 "========================================================
 " EDITOR CONFIGS
@@ -206,6 +207,23 @@ function! BookmarksFZF()
     call fzf#vim#ag('', {'source': map(bm#location_list(), 'BookmarkItem(v:val)'), 'down': '30%', 'options': '--prompt "Bookmarks  >>>  "'})
 endfunction
 let g:bookmark_no_default_key_mappings = 1
+" Finds the Git super-project directory.
+function! g:BMWorkDirFileLocation()
+    let filename = 'bookmarks'
+    let location = ''
+    if isdirectory('.git')
+        " Current work dir is git's work tree
+        let location = getcwd().'/.git'
+    else
+        " Look upwards (at parents) for a directory named '.git'
+        let location = finddir('.git', '.;')
+    endif
+    if len(location) > 0
+        return location.'/'.filename
+    else
+        return getcwd().'/.'.filename
+    endif
+endfunction
 function! BookmarkMapKeys()
     nmap mm :BookmarkToggle<CR>
     nmap mi :BookmarkAnnotate<CR>
@@ -252,6 +270,43 @@ if has("nvim")
   tnoremap <c-e> <C-\><C-n>
 end
 nmap <silent> <leader>t :TagbarToggle<CR>
+"========================================================
+" CONFIG SIGNIFY
+"========================================================
+let g:signify_vcs_list = ['git']
+let g:signify_sign_show_count = 0
+let g:signify_sign_add               = '+'
+let g:signify_sign_delete            = '-'
+let g:signify_sign_delete_first_line = '-'
+let g:signify_sign_change            = '·'
+let g:signify_sign_changedelete      = g:signify_sign_change
+highlight SignifySignAdd guibg=255
+highlight SignifySignDelete guibg=255
+highlight SignifySignChange guibg=255
+"========================================================
+" STARTIFY CONFIGS
+"========================================================
+let g:startify_change_to_dir = 0
+let g:startify_lists = [
+      \ { 'type': 'sessions',  'header': ['   Sessions']       },
+      \ { 'type': 'dir',       'header': ['   MRU '. getcwd()] },
+      \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
+      \ { 'type': 'commands',  'header': ['   Commands']       },
+      \ ]
+let g:startify_custom_header = [
+      \'   _________            .___               .__            __                          .__',
+      \'   \_   ___ \  ____   __| _/____   __  _  _|  |__ _____ _/  |_   ___.__. ____  __ __  |  |   _______  __ ____',
+      \'   /    \  \/ /  _ \ / __ |/ __ \  \ \/ \/ /  |  \\__  \\   __\ <   |  |/  _ \|  |  \ |  |  /  _ \  \/ // __ \',
+      \'   \     \___(  <_> ) /_/ \  ___/   \     /|   Y  \/ __ \|  |    \___  (  <_> )  |  / |  |_(  <_> )   /\  ___/',
+      \'   \______  /\____/\____ |\___  >   \/\_/ |___|  (____  /__|    / ____|\____/|____/  |____/\____/ \_/  \___  > /\',
+      \'          \/            \/    \/               \/     \/        \/                                         \/  \/',
+      \'   .____                                .__            __                                           .___',
+      \'   |    |    _______  __ ____   __  _  _|  |__ _____ _/  |_   ___.__. ____  __ __    ____  ____   __| _/____',
+      \'   |    |   /  _ \  \/ // __ \  \ \/ \/ /  |  \\__  \\   __\ <   |  |/  _ \|  |  \ _/ ___\/  _ \ / __ |/ __ \',
+      \'   |    |__(  <_> )   /\  ___/   \     /|   Y  \/ __ \|  |    \___  (  <_> )  |  / \  \__(  <_> ) /_/ \  ___/',
+      \'   |_______ \____/ \_/  \___  >   \/\_/ |___|  (____  /__|    / ____|\____/|____/   \___  >____/\____ |\___  > /\',
+      \'           \/               \/               \/     \/        \/                        \/           \/    \/  \/',
+      \]
 "========================================================
 " MACHINE CONFIGS
 "========================================================
