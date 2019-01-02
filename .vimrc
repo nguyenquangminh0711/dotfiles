@@ -25,7 +25,6 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
 " Plug 'zchee/deoplete-go', { 'do': 'make'}
-" Plug 'zchee/deoplete-clang'
 Plug 'Shougo/deoplete-clangx'
 Plug 'w0rp/ale'
 Plug 'fatih/vim-go'
