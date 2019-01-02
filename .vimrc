@@ -21,11 +21,12 @@ Plug 'tpope/vim-fugitive'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'vim-scripts/git-time-lapse'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'zchee/deoplete-go', { 'do': 'make'}
-Plug 'zchee/deoplete-clang'
+" Plug 'zchee/deoplete-go', { 'do': 'make'}
+" Plug 'zchee/deoplete-clang'
+Plug 'Shougo/deoplete-clangx'
 Plug 'w0rp/ale'
 Plug 'fatih/vim-go'
 Plug 'christoomey/vim-tmux-navigator'
@@ -35,6 +36,9 @@ Plug 'MattesGroeger/vim-bookmarks'
 Plug 'majutsushi/tagbar'
 Plug 'mhinz/vim-startify'
 Plug 'mhinz/vim-signify'
+Plug 'dbgx/lldb.nvim'
+Plug 'iamcco/markdown-preview.vim'
+Plug 'dbeniamine/cheat.sh-vim'
 call plug#end()
 "========================================================
 " EDITOR CONFIGS
@@ -51,7 +55,7 @@ set gfn=DejaVu\ Sans\ Mono\ for\ Powerline:h13
 let g:auto_ctags = 1
 set breakindent
 set nofoldenable
-set tags=./tags;,tags;
+" set tags=./tags;,tags;
 set ruler
 set number
 set expandtab
@@ -74,6 +78,12 @@ endif
 let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
 let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
 let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+
+"========================================================
+" CONFIG PYTHON
+"========================================================
+let g:python_host_prog = '/System/Library/Frameworks/Python.framework/Versions/2.7/bin/python'
+let g:python3_host_prog = '/usr/local/bin/python3.7'
 "========================================================
 " CONFIG ALE
 "========================================================
@@ -84,7 +94,7 @@ let g:ale_linters = {
 \   'javascript': ['eslint'],
 \   'c': ["clang"],
 \}
-let g:ale_c_clang_options = '-std=c11 -Wall -I/Users/dark_wing0711/www/ruby -I/Users/dark_wing0711/www/ruby/include -I/Users/dark_wing0711/www/ruby/.ext/include/x86_64-darwin16'
+let g:ale_c_clang_options = "-std=c11 -Wall"
 let g:ale_lint_on_text_changed="never"
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
@@ -106,28 +116,27 @@ let g:go_def_mode = "guru"
 if !exists('g:deoplete#omni#input_patterns')
   let g:deoplete#omni#input_patterns = {}
 endif
-let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_ignore_case = 'ignorecase'
 let g:deoplete#sources = {}
 let g:deoplete#sources_ = ['buffer','tag']
-" <Tab> completion:
-" 1. If popup menu is visible, select and insert next item
-" 2. Otherwise, if within a snippet, jump to next input
-" 3. Otherwise, if preceding chars are whitespace, insert tab char
-" 4. Otherwise, start manual autocomplete
-imap <silent><expr><Tab> pumvisible() ? "\<C-n>"
-\ : (neosnippet#jumpable() ? "\<Plug>(neosnippet_jump)"
-\ : (<SID>is_whitespace() ? "\<Tab>"
-\ : deoplete#mappings#manual_complete()))
-smap <silent><expr><Tab> pumvisible() ? "\<C-n>"
-\ : (neosnippet#jumpable() ? "\<Plug>(neosnippet_jump)"
-\ : (<SID>is_whitespace() ? "\<Tab>"
-\ : deoplete#mappings#manual_complete()))
-inoremap <expr><S-Tab>  pumvisible() ? "\<C-p>" : "\<C-h>"
-function! s:is_whitespace() "{{{
-let col = col('.') - 1
-return ! col || getline('.')[col - 1] =~? '\s'
-endfunction "}}}
+let g:neosnippet#enable_completed_snippet = 1
+
+imap <C-b> <Plug>(neosnippet_expand_or_jump)
+smap <C-b> <Plug>(neosnippet_expand_or_jump)
+xmap <C-b> <Plug>(neosnippet_expand_target)
+
+" For conceal markers.
+if has('conceal')
+  set conceallevel=2 concealcursor=niv
+endif
+
+inoremap <silent><expr> <TAB>
+      \ neosnippet#expandable_or_jumpable() ?
+      \ neosnippet#mappings#jump_or_expand_impl() :
+      \ "\<TAB>"
+
+
+call deoplete#custom#var('clangx', 'clang_binary', '/usr/bin/clang')
 "========================================================
 " CONFIG MISC
 "========================================================
@@ -165,7 +174,7 @@ map <c-]> <ESC>:call fzf#vim#tags(expand("<cword>"), {'options': '--exact'})<cr>
 "========================================================
 " MAPPING NERDTree
 "========================================================
-map <silent> <leader>ls <ESC>:NERDTreeToggle<CR>
+map <silent> <leader>nt <ESC>:NERDTreeToggle<CR>
 map <silent> <leader>rev :NERDTreeFind<CR>
 let NERDTreeMapOpenSplit = 'x'
 let NERDTreeMapOpenVSplit = 'v'
@@ -270,6 +279,8 @@ if has("nvim")
   tnoremap <c-e> <C-\><C-n>
 end
 nmap <silent> <leader>t :TagbarToggle<CR>
+let vim_markdown_preview_hotkey='<C-r>'
+let vim_markdown_preview_github=1
 "========================================================
 " CONFIG SIGNIFY
 "========================================================
@@ -283,6 +294,18 @@ let g:signify_sign_changedelete      = g:signify_sign_change
 highlight SignifySignAdd guibg=255
 highlight SignifySignDelete guibg=255
 highlight SignifySignChange guibg=255
+"========================================================
+" LLDB CONFIGS
+"========================================================
+nnoremap <silent> <leader>lld <ESC>:LLmode debug<CR>
+nnoremap <silent> <leader>llc <ESC>:LLmode code<CR>
+nnoremap <silent> <leader>lll <ESC>:LLsession load<CR>
+nnoremap <silent> <leader>lc <ESC>:LL continue<CR>
+nnoremap <silent> <leader>ln <ESC>:LL next<CR>
+nnoremap <silent> <leader>ls <ESC>:LL step<CR>
+nnoremap <silent> <leader>lp :LL print <C-R>=expand('<cword>')<CR>
+vnoremap <silent> <leader>lp :<C-U>LL print <C-R>=lldb#util#get_selection()<CR><CR>
+nmap <leader>lb <Plug>LLBreakSwitch
 "========================================================
 " STARTIFY CONFIGS
 "========================================================
@@ -307,6 +330,3 @@ let g:startify_custom_header = [
       \'   |_______ \____/ \_/  \___  >   \/\_/ |___|  (____  /__|    / ____|\____/|____/   \___  >____/\____ |\___  > /\',
       \'           \/               \/               \/     \/        \/                        \/           \/    \/  \/',
       \]
-"========================================================
-" MACHINE CONFIGS
-"========================================================
