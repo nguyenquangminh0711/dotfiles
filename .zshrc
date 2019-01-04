@@ -9,8 +9,6 @@ prompt pure
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # Sytax highlighting: git clone git@github.com:zsh-users/zsh-syntax-highlighting.git ~/.zsh/
 [ -f ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# Auto sugesttion: git clone git@github.com:zsh-users/zsh-autosuggestions.git ~/.zsh/
-[ -f ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ] && source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 # I use rbenv, not rvm
 if (( $+commands[rbenv] )); then
     eval "$(rbenv init -)"
@@ -33,3 +31,7 @@ export PATH=$PATH:$GOROOT/bin
 export PATH=${PATH}:/usr/local/mysql/bin/
 export PATH=$PATH:/usr/local/sbin
 export PATH="$HOME/.cargo/bin:$PATH"
+
+export FZF_TMUX=1
+export FZF_CTRL_T_OPTS="--exact"
+export FZF_CTRL_R_OPTS="--exact --sort"
