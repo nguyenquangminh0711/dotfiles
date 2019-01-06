@@ -1,6 +1,9 @@
 # Configuration for Pure. https://github.com/sindresorhus/pure
 autoload -U promptinit; promptinit
 prompt pure
+
+autoload -U edit-command-line
+zle -N edit-command-line
 # Store all aliases
 [ -f ~/.zsh/aliases.sh ] && source ~/.zsh/aliases.sh
 # Store local secrets
@@ -13,6 +16,8 @@ prompt pure
 if (( $+commands[rbenv] )); then
     eval "$(rbenv init -)"
 fi
+
+bindkey -M vicmd V edit-command-line
 
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000000
