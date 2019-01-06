@@ -21,7 +21,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'vim-scripts/git-time-lapse'
-Plug 'christoomey/vim-tmux-runner'
+Plug 'benmills/vimux'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
@@ -146,8 +146,8 @@ let g:indentLine_enabled = 0
 " Tmux navigation
 let g:tmux_navigator_no_mappings = 1
 " Rpsec config
-let test#strategy = "vtr"
-" Solve vim ESC delay
+let g:VimuxUseNearest = 0
+let g:test#strategy = 'vimux'
 set timeoutlen=1000 ttimeoutlen=0
 if has("autocmd")
   autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
