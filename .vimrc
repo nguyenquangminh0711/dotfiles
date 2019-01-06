@@ -275,9 +275,6 @@ noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
 noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
 noremap <silent> <expr> ^ (v:count == 0 ? 'g^' : '^')
 noremap <silent> <expr> $ (v:count == 0 ? 'g$' : '^')
-if has("nvim")
-  tnoremap <c-e> <C-\><C-n>
-end
 nmap <silent> <leader>t :TagbarToggle<CR>
 let vim_markdown_preview_hotkey='<C-r>'
 let vim_markdown_preview_github=1
