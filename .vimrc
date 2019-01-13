@@ -175,7 +175,7 @@ map <c-]> <ESC>:call fzf#vim#tags(expand("<cword>"), {'options': '--exact'})<cr>
 " MAPPING NERDTree
 "========================================================
 map <silent> <leader>nt <ESC>:NERDTreeToggle<CR>
-map <silent> <leader>rev :NERDTreeFind<CR>
+map <silent> <leader>rev <ESC>:NERDTreeFind<CR>
 let NERDTreeMapOpenSplit = 'x'
 let NERDTreeMapOpenVSplit = 'v'
 "========================================================
@@ -205,6 +205,7 @@ map <silent> <leader>gt :call TimeLapse() <cr>
 "========================================================
 " BOOKMARKS
 "========================================================
+let g:bookmark_no_default_key_mappings = 1
 let g:bookmark_save_per_working_dir = 1
 let g:bookmark_highlight_lines = 1
 
@@ -215,7 +216,6 @@ endfunction
 function! BookmarksFZF()
     call fzf#vim#ag('', {'source': map(bm#location_list(), 'BookmarkItem(v:val)'), 'down': '30%', 'options': '--prompt "Bookmarks  >>>  "'})
 endfunction
-let g:bookmark_no_default_key_mappings = 1
 " Finds the Git super-project directory.
 function! g:BMWorkDirFileLocation()
     let filename = 'bookmarks'
@@ -233,31 +233,16 @@ function! g:BMWorkDirFileLocation()
         return getcwd().'/.'.filename
     endif
 endfunction
-function! BookmarkMapKeys()
-    nmap mm :BookmarkToggle<CR>
-    nmap mi :BookmarkAnnotate<CR>
-    nmap mn :BookmarkNext<CR>
-    nmap mp :BookmarkPrev<CR>
-    nmap ma <ESC>:call BookmarksFZF()<CR>
-    nmap mc :BookmarkClear<CR>
-    nmap mx :BookmarkClearAll<CR>
-    nmap mkk :BookmarkMoveUp
-    nmap mjj :BookmarkMoveDown
-endfunction
-function! BookmarkUnmapKeys()
-    unmap mm
-    unmap mi
-    unmap mn
-    unmap mp
-    unmap ma
-    unmap mc
-    unmap mx
-    unmap mkk
-    unmap mjj
-endfunction
-autocmd BufEnter * :call BookmarkMapKeys()
-autocmd BufEnter NERD_tree_* :call BookmarkUnmapKeys()
-map ma <ESC>:call BookmarksFZF()<CR>
+
+nmap <leader>mm :BookmarkToggle<CR>
+nmap <leader>mi :BookmarkAnnotate<CR>
+nmap <leader>mn :BookmarkNext<CR>
+nmap <leader>mp :BookmarkPrev<CR>
+nmap <leader>ma <ESC>:call BookmarksFZF()<CR>
+nmap <leader>mc :BookmarkClear<CR>
+nmap <leader>mx :BookmarkClearAll<CR>
+nmap <leader>mkk :BookmarkMoveUp
+nmap <leader>mjj :BookmarkMoveDown
 "========================================================
 " MAPPING MISC
 "========================================================
