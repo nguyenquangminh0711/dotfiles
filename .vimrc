@@ -25,7 +25,7 @@ Plug 'benmills/vimux'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
-" Plug 'zchee/deoplete-go', { 'do': 'make'}
+Plug 'zchee/deoplete-go', { 'do': 'make'}
 Plug 'Shougo/deoplete-clangx'
 Plug 'w0rp/ale'
 Plug 'fatih/vim-go'
@@ -39,6 +39,8 @@ Plug 'mhinz/vim-signify'
 Plug 'dbgx/lldb.nvim'
 Plug 'iamcco/markdown-preview.vim'
 Plug 'dbeniamine/cheat.sh-vim'
+Plug 'kana/vim-textobj-user'
+Plug 'tek/vim-textobj-ruby'
 call plug#end()
 "========================================================
 " EDITOR CONFIGS
@@ -57,7 +59,6 @@ set breakindent
 set nofoldenable
 " set tags=./tags;,tags;
 set ruler
-set number
 set expandtab
 set autoindent
 set clipboard=unnamed
@@ -70,6 +71,8 @@ set encoding=utf8
 set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Plus\ Nerd\ File\ Types:h11
 set background=dark
 set bs=2 tabstop=2 shiftwidth=2 softtabstop=2
+set number
+
 colorscheme tender
 if (has("termguicolors"))
  set termguicolors
@@ -94,8 +97,10 @@ let g:ale_linters = {
 \   'javascript': ['eslint'],
 \   'c': ["clang"],
 \}
+let g:ale_linters_explicit = 1
 let g:ale_c_clang_options = "-std=c11 -Wall"
 let g:ale_lint_on_text_changed="never"
+let g:ale_echo_cursor = 0
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
@@ -125,11 +130,6 @@ imap <C-b> <Plug>(neosnippet_expand_or_jump)
 smap <C-b> <Plug>(neosnippet_expand_or_jump)
 xmap <C-b> <Plug>(neosnippet_expand_target)
 
-" For conceal markers.
-if has('conceal')
-  set conceallevel=2 concealcursor=niv
-endif
-
 inoremap <silent><expr> <TAB>
       \ neosnippet#expandable_or_jumpable() ?
       \ neosnippet#mappings#jump_or_expand_impl() :
@@ -150,14 +150,12 @@ let g:VimuxUseNearest = 0
 let g:test#strategy = 'vimux'
 set timeoutlen=1000 ttimeoutlen=0
 if has("autocmd")
-  autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
-  autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
-  autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
-  autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
   autocmd FileType go set tabstop=8 shiftwidth=8 softtabstop=8
   autocmd FileType xml set equalprg=xmllint\ --format\ -
   autocmd BufWritePre * StripWhitespace
+  autocmd BufEnter * autocmd! matchparen
 endif
+
 let g:move_key_modifier = 'C'
 let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.html.eex,*.html.erb"
 let g:jsx_ext_required = 0
@@ -194,6 +192,12 @@ let g:EasyMotion_smartcase = 1
 map / <Plug>(easymotion-sn)
 omap / <Plug>(easymotion-tn)
 "========================================================
+" MAPPING VIM-GO
+"========================================================
+nmap <Leader>gs <ESC>:split<CR><ESC>:GoDef<CR>
+nmap <Leader>gv <Plug>(go-def-vertical)
+nmap <Leader>gd <ESC>:GoDeclsDir<CR>
+"========================================================
 " MAPPING EASYALIGN
 "========================================================
 xmap ga <Plug>(EasyAlign)
@@ -208,6 +212,9 @@ map <silent> <leader>gt :call TimeLapse() <cr>
 let g:bookmark_no_default_key_mappings = 1
 let g:bookmark_save_per_working_dir = 1
 let g:bookmark_highlight_lines = 1
+
+function Highlight_Matching_Pair()
+endfunction
 
 function! BookmarkItem(line)
   let lnr = split(v:val, ":")
@@ -256,10 +263,10 @@ map <silent> <C-k> <ESC>:TmuxNavigateUp<CR>
 map <silent> <C-j> <ESC>:TmuxNavigateDown<CR>
 nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
 map <silent> <leader>path :let @+=@%<CR>
-noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
-noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
-noremap <silent> <expr> ^ (v:count == 0 ? 'g^' : '^')
-noremap <silent> <expr> $ (v:count == 0 ? 'g$' : '^')
+" noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
+" noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
+" noremap <silent> <expr> ^ (v:count == 0 ? 'g^' : '^')
+" noremap <silent> <expr> $ (v:count == 0 ? 'g$' : '^')
 nmap <silent> <leader>t :TagbarToggle<CR>
 let vim_markdown_preview_hotkey='<C-r>'
 let vim_markdown_preview_github=1
@@ -292,6 +299,7 @@ nmap <leader>lb <Plug>LLBreakSwitch
 " STARTIFY CONFIGS
 "========================================================
 let g:startify_change_to_dir = 0
+let g:startify_session_persistence = 1
 let g:startify_lists = [
       \ { 'type': 'sessions',  'header': ['   Sessions']       },
       \ { 'type': 'dir',       'header': ['   MRU '. getcwd()] },

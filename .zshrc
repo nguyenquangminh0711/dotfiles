@@ -1,9 +1,11 @@
 # Configuration for Pure. https://github.com/sindresorhus/pure
 autoload -U promptinit; promptinit
+autoload -U compinit; compinit
+autoload -U edit-command-line
 prompt pure
 
-autoload -U edit-command-line
 zle -N edit-command-line
+
 # Store all aliases
 [ -f ~/.zsh/aliases.sh ] && source ~/.zsh/aliases.sh
 # Store local secrets
@@ -12,15 +14,14 @@ zle -N edit-command-line
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # Sytax highlighting: git clone git@github.com:zsh-users/zsh-syntax-highlighting.git ~/.zsh/
 [ -f ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# Autojump: git clone git@github.com:git://github.com/wting/autojump.git ~/.zsh/
-[ -f ~/.autojump/etc/profile.d/autojump.sh ] && source ~/.autojump/etc/profile.d/autojump.sh
+# Autojump: git clone git@github.com:skywind3000/z.lua ~/.zsh/z.lua ~/.zsh/z.lua
+[ -f ~/.zsh/z.lua/z.lua ] && eval "$(lua ~/.zsh/z.lua/z.lua --init zsh enhanced)"
 # I use rbenv, not rvm
 if (( $+commands[rbenv] )); then
     eval "$(rbenv init -)"
 fi
 
-bindkey -M vicmd V edit-command-line
-
+ZSH_DISABLE_COMPFIX=true
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000000
 SAVEHIST=10000000
@@ -31,3 +32,7 @@ export EDITOR='nvim'
 export FZF_TMUX=1
 export FZF_CTRL_T_OPTS="--exact"
 export FZF_CTRL_R_OPTS="--exact --sort"
+
+bindkey '^xe' edit-command-line
+bindkey '^x^e' edit-command-line
+export PATH="/usr/local/opt/libiconv/bin:$PATH"
