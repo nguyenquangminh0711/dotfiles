@@ -81,19 +81,19 @@ tabspaces: 4
 font:
   # Normal (roman) font face
   normal:
-    family: DejaVuSansMonoForPowerline Nerd Font
+    family: FuraCode Nerd Font Mono
     # The `style` can be specified to pick a specific face.
-    #style: Regular
+    # style: Light
 
   # Bold font face
   bold:
-    family: DejaVuSansMonoForPowerline Nerd Font
+    family: FuraCode Nerd Font Mono
     # The `style` can be specified to pick a specific face.
     #style: Bold
 
   # Italic font face
   italic:
-    family: DejaVuSansMonoForPowerline Nerd Font
+    family: FuraCode Nerd Font Mono
     # The `style` can be specified to pick a specific face.
     #style: Italic
 
@@ -193,7 +193,7 @@ visual_bell:
 #
 # Window opacity as a floating point number from `0.0` to `1.0`.
 # The value `0.0` is completely transparent and `1.0` is opaque.
-background_opacity: 1.0
+background_opacity: 0.8
 
 # Mouse bindings
 #
@@ -251,7 +251,7 @@ cursor:
   #   - ▇ Block
   #   - _ Underline
   #   - | Beam
-  style: Block
+  style: Beam
 
   # If this is `true`, the cursor will be rendered as a hollow box when the
   # window is not focused.

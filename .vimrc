@@ -1,4 +1,4 @@
-"========================================================
+"guibg========================================================
 " INSTALL PLUGINS
 "========================================================
 filetype off
@@ -27,7 +27,7 @@ Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'zchee/deoplete-go', { 'do': 'make'}
 Plug 'Shougo/deoplete-clangx'
-Plug 'w0rp/ale'
+Plug 'dense-analysis/ale'
 Plug 'fatih/vim-go'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'brooth/far.vim'
@@ -38,9 +38,7 @@ Plug 'mhinz/vim-startify'
 Plug 'mhinz/vim-signify'
 Plug 'dbgx/lldb.nvim'
 Plug 'iamcco/markdown-preview.vim'
-Plug 'dbeniamine/cheat.sh-vim'
-Plug 'kana/vim-textobj-user'
-Plug 'tek/vim-textobj-ruby'
+Plug 'junegunn/goyo.vim'
 call plug#end()
 "========================================================
 " EDITOR CONFIGS
@@ -77,6 +75,7 @@ colorscheme tender
 if (has("termguicolors"))
  set termguicolors
 endif
+hi Normal guibg=NONE ctermbg=NONE
 " Fix iterm display
 let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
 let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
@@ -97,10 +96,10 @@ let g:ale_linters = {
 \   'javascript': ['eslint'],
 \   'c': ["clang"],
 \}
-let g:ale_linters_explicit = 1
+let g:ale_set_highlights = 1
 let g:ale_c_clang_options = "-std=c11 -Wall"
 let g:ale_lint_on_text_changed="never"
-let g:ale_echo_cursor = 0
+let g:ale_echo_cursor = 1
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
@@ -108,6 +107,32 @@ let g:ale_set_highlights = 0
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
 highlight SignColumn guibg=255
+"========================================================
+" CONFIG LIGHTLINE
+"========================================================
+function! LinterStatus() abort
+    let l:counts = ale#statusline#Count(bufnr(''))
+
+    let l:all_errors = l:counts.error + l:counts.style_error
+    let l:all_non_errors = l:counts.total - l:all_errors
+
+    return l:counts.total == 0 ? 'Linter OK' : printf(
+    \   'Linter %dW %dE',
+    \   all_non_errors,
+    \   all_errors
+    \)
+endfunction
+
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'readonly', 'filename', 'modified', 'alestatus' ] ]
+      \ },
+      \ 'component_function': {
+      \   'alestatus': 'LinterStatus'
+      \ },
+      \ }
 "========================================================
 " CONFIG DEOPLETE
 "========================================================
@@ -160,14 +185,14 @@ let g:move_key_modifier = 'C'
 let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.html.eex,*.html.erb"
 let g:jsx_ext_required = 0
 let g:fzf_tags_command = 'ctags -R --exclude=.git --exclude=node_modules'
-let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git --ignore node_modules -l -g ""'
-let g:fzf_preview_source=" --preview='bat {}'"
+let $FZF_DEFAULT_COMMAND = 'rg --files --hidden'
+let g:fzf_preview_source=" --preview='bat {} --color=always'"
 "========================================================
 " MAPPING FZF
 "========================================================
 map <c-p> <ESC>:call fzf#vim#files('.', {'options': g:fzf_preview_source})<CR>
 map <silent> <leader>/ <ESC>:BLines<CR>
-map <leader>ag <ESC>:Ag<space>
+map <leader>rg <ESC>:Rg<space>
 map <c-]> <ESC>:call fzf#vim#tags(expand("<cword>"), {'options': '--exact'})<cr>
 "========================================================
 " MAPPING NERDTree
@@ -206,6 +231,22 @@ nmap ga <Plug>(EasyAlign)
 " MAPPING GIT
 "========================================================
 map <silent> <leader>gt :call TimeLapse() <cr>
+let g:reviewbase = $REVIEW_BASE
+map <silent> <c-d> :execute 'vert Gdiff '.g:reviewbase<cr>
+map <silent> <c-r> :GitChangesFZF<cr>
+function! s:open_review_file(line)
+  let keys = split(a:line, '\t')
+  bufdo bd
+  execute 'e '.keys[2]
+  execute 'vert Gdiff '.g:reviewbase
+endfunction
+
+command! GitChangesFZF call fzf#run({
+\   'source':  'git stat | sort -k3',
+\   'sink':    function('<sid>open_review_file'),
+\   'options': '--extended --nth=3..',
+\   'down':    '30%'
+\})
 "========================================================
 " BOOKMARKS
 "========================================================
@@ -213,32 +254,12 @@ let g:bookmark_no_default_key_mappings = 1
 let g:bookmark_save_per_working_dir = 1
 let g:bookmark_highlight_lines = 1
 
-function Highlight_Matching_Pair()
-endfunction
-
 function! BookmarkItem(line)
   let lnr = split(v:val, ":")
   return lnr[0].":".lnr[1].":0"."\t".join(lnr[2:], ":")
 endfunction
 function! BookmarksFZF()
     call fzf#vim#ag('', {'source': map(bm#location_list(), 'BookmarkItem(v:val)'), 'down': '30%', 'options': '--prompt "Bookmarks  >>>  "'})
-endfunction
-" Finds the Git super-project directory.
-function! g:BMWorkDirFileLocation()
-    let filename = 'bookmarks'
-    let location = ''
-    if isdirectory('.git')
-        " Current work dir is git's work tree
-        let location = getcwd().'/.git'
-    else
-        " Look upwards (at parents) for a directory named '.git'
-        let location = finddir('.git', '.;')
-    endif
-    if len(location) > 0
-        return location.'/'.filename
-    else
-        return getcwd().'/.'.filename
-    endif
 endfunction
 
 nmap <leader>mm :BookmarkToggle<CR>
@@ -263,10 +284,6 @@ map <silent> <C-k> <ESC>:TmuxNavigateUp<CR>
 map <silent> <C-j> <ESC>:TmuxNavigateDown<CR>
 nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
 map <silent> <leader>path :let @+=@%<CR>
-" noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
-" noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
-" noremap <silent> <expr> ^ (v:count == 0 ? 'g^' : '^')
-" noremap <silent> <expr> $ (v:count == 0 ? 'g$' : '^')
 nmap <silent> <leader>t :TagbarToggle<CR>
 let vim_markdown_preview_hotkey='<C-r>'
 let vim_markdown_preview_github=1
