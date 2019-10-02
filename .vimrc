@@ -212,18 +212,20 @@ noremap <silent> <leader>/ <ESC>:BLines<CR>
 noremap <leader>rg <ESC>:Rg<space>
 noremap <c-]> <ESC>:call fzf#vim#tags(expand("<cword>"), {'options': '--exact'})<cr>
 let $FZF_DEFAULT_OPTS='--layout=reverse'
-"Open FZF and choose floating window
-let g:fzf_layout = { 'window': 'call OpenFloatingWin()' }
-function! OpenFloatingWin()
-  let height = &lines
-  let width = &columns
+"Open FZF in floating window
+let g:fzf_layout = { 'window': 'call FzfFloatingWindow()' }
+function! FzfFloatingWindow()
+  let height = float2nr((&lines - 2) * 0.6) " lightline + status
+  let row = float2nr((&lines - height) / 2)
+  let width = float2nr(&columns * 0.6)
+  let col = float2nr((&columns - width) / 2)
 
   let opts = {
         \ 'relative': 'editor',
-        \ 'row': height * 0.75,
-        \ 'col': 0,
+        \ 'row': row,
+        \ 'col': col,
         \ 'width': width,
-        \ 'height': height / 4
+        \ 'height': height
         \ }
 
   let buf = nvim_create_buf(v:false, v:true)
