@@ -280,7 +280,7 @@ endfunction
 command! GitChangesFZF call fzf#run({
 \   'source':  'git stat | sort -k3',
 \   'sink':    function('<sid>open_review_file'),
-\   'window': 'call OpenFloatingWin()',
+\   'window': 'call FzfFloatingWindow()',
 \   'options': '--extended --nth=3..',
 \   'down':    '30%'
 \})
