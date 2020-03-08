@@ -13,10 +13,10 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-endwise'
 Plug 'mbbill/undotree'
-Plug 'ryanoasis/vim-devicons'
 Plug 'janko-m/vim-test'
 Plug 'junegunn/vim-easy-align'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'vim-scripts/git-time-lapse'
@@ -25,7 +25,6 @@ Plug 'dense-analysis/ale'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'brooth/far.vim'
 Plug 'kristijanhusak/vim-carbon-now-sh'
-Plug 'MattesGroeger/vim-bookmarks'
 Plug 'majutsushi/tagbar'
 Plug 'mhinz/vim-startify'
 Plug 'mhinz/vim-signify'
@@ -36,6 +35,10 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'neoclide/coc-neco'
 Plug 'derekwyatt/vim-scala'
 Plug 'justinmk/vim-sneak'
+Plug 'elzr/vim-json'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'MaxMEllon/vim-jsx-pretty'
 call plug#end()
 "========================================================
 " EDITOR CONFIGS
@@ -86,15 +89,21 @@ colorscheme deep-space
 let g:python_host_prog = '/System/Library/Frameworks/Python.framework/Versions/2.7/bin/python'
 let g:python3_host_prog = '/usr/local/bin/python3.7'
 "========================================================
+" CONFIG SNIPPETS
+"========================================================
+let g:UltiSnipsExpandTrigger="<c-k>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+"========================================================
 " CONFIG ALE
 "========================================================
-let g:ale_fixers = {
-\ 'ruby': ['rubocop']
-\ }
-let g:ale_linters = {
-\   'javascript': ['eslint'],
-\   'c': ["clang"],
-\}
+" let g:ale_fixers = {
+" \ 'ruby': ['rubocop']
+" \ }
+" let g:ale_linters = {
+" \   'javascript': ['eslint'],
+" \   'c': ["clang"],
+" \}
 let g:ale_c_clang_options = "-std=c11 -Wall"
 let g:ale_lint_on_text_changed="never"
 let g:ale_echo_cursor = 1
@@ -153,16 +162,15 @@ set shortmess+=c
 " always show signcolumns
 set signcolumn=yes
 
-nnoremap <silent> gd <Plug>(coc-definition)
-nnoremap <silent> gy <Plug>(coc-type-definition)
-nnoremap <silent> gi <Plug>(coc-implementation)
-nnoremap <silent> gr <Plug>(coc-references)
-nnoremap <leader>rn <Plug>(coc-rename)
+nnoremap <silent> gj :call CocAction('jumpDefinition')<CR>
+nnoremap <silent> gd :call <SID>show_documentation()<CR>
+nnoremap <silent> gr :call CocAction('jumpReferences')<CR>
+nnoremap <silent> gf :call CocAction('format')<CR>
+vnoremap <silent> gf :call CocAction('formatSelected')<CR>
+nnoremap <silent> gz :call CocAction('fold', <f-args>)<CR>
 
 " Highlight symbol under cursor on CursorHold
 autocmd CursorHold * silent call CocActionAsync('highlight')
-" Use K to show documentation in preview window
-nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -171,14 +179,6 @@ function! s:show_documentation()
     call CocAction('doHover')
   endif
 endfunction
-
-" Remap for rename current word
-nnoremap <leader>rn <Plug>(coc-rename)
-" Use `:Format` to format current buffer
-command! -nargs=0 Format :call CocAction('format')
-
-" Use `:Fold` to fold current buffer
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 "========================================================
 " CONFIG MISC
 "========================================================
@@ -261,8 +261,8 @@ let test#ruby#rspec#executable = 'bundle exec rspec'
 "========================================================
 " MAPPING EASYALIGN
 "========================================================
-xnoremap ga <Plug>(EasyAlign)
-nnoremap ga <Plug>(EasyAlign)
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
 "========================================================
 " MAPPING GIT
 "========================================================
