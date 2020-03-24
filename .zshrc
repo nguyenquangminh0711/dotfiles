@@ -1,3 +1,4 @@
+fpath+=$HOME/.zsh/pure
 # Configuration for Pure. https://github.com/sindresorhus/pure
 autoload -U promptinit; promptinit
 autoload -U compinit; compinit
@@ -20,12 +21,6 @@ zle -N edit-command-line
 if (( $+commands[rbenv] )); then
     eval "$(rbenv init -)"
 fi
-
-load_nvm() {
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-}
 
 ZSH_DISABLE_COMPFIX=true
 HISTFILE="$HOME/.zsh_history"

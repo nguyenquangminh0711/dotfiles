@@ -86,8 +86,8 @@ colorscheme deep-space
 "========================================================
 " CONFIG PYTHON
 "========================================================
-let g:python_host_prog = '/System/Library/Frameworks/Python.framework/Versions/2.7/bin/python'
-let g:python3_host_prog = '/usr/local/bin/python3.7'
+let g:python_host_prog = '/usr/bin/python'
+let g:python3_host_prog = '/usr/bin/python3'
 "========================================================
 " CONFIG SNIPPETS
 "========================================================
@@ -296,8 +296,15 @@ nnoremap <silent> <C-l> <ESC>:TmuxNavigateRight<CR>
 nnoremap <silent> <C-k> <ESC>:TmuxNavigateUp<CR>
 nnoremap <silent> <C-j> <ESC>:TmuxNavigateDown<CR>
 nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
-nnoremap <silent> <leader>path :let @+=@%<CR>
+nnoremap <silent> <leader>path :call system("xclip -sel clip", @%)<CR>
 nnoremap <silent> <leader>t :TagbarToggle<CR>
+fun! Xclip() range
+  let l:_a = @a
+  exec a:firstline . ',' . a:lastline . 'yank'
+  exec a:firstline . ',' . a:lastline . 'w !$HOME/www/dotfiles/yank.sh'
+  let @a = l:_a
+endfun
+vnoremap <silent>y :call Xclip()<CR><CR>
 let vim_markdown_preview_hotkey='<C-r>'
 let vim_markdown_preview_github=1
 "========================================================
