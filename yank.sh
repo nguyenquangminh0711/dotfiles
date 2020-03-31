@@ -24,5 +24,5 @@ esc="\033Ptmux;\033$esc\033\\"
 # to terminal on local machine, so data lands in clipboard on our local machine
 pane_active_tty=$(tmux list-panes -F "#{pane_active} #{pane_tty}" | awk '$1=="1" { print $2 }')
 
-printf "$esc" | xclip -i -sel clipboard
+printf "$buf" | xclip -i -sel clipboard
 printf "$esc" > "$pane_active_tty"
