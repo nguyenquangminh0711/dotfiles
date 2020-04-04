@@ -12,7 +12,21 @@ zle -N edit-command-line
 # Store local secrets
 [ -f ~/.zsh/secrets.sh ] && source ~/.zsh/secrets.sh
 # FZF
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+if (( $+commands[fzf] )); then
+  # Setup fzf
+  # ---------
+  if [[ ! "$PATH" == *$HOME/.fzf/bin* ]]; then
+    export PATH="${PATH:+${PATH}:}$HOME/.fzf/bin"
+  fi
+
+  # Auto-completion
+  # ---------------
+  [[ $- == *i* ]] && source "$HOME/.fzf/shell/completion.zsh" 2> /dev/null
+
+  # Key bindings
+  # ------------
+  source "$HOME/.fzf/shell/key-bindings.zsh"
+fi
 # Sytax highlighting: git clone git@github.com:zsh-users/zsh-syntax-highlighting.git ~/.zsh/
 [ -f ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Autojump: git clone git@github.com:skywind3000/z.lua ~/.zsh/

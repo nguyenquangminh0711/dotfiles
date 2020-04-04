@@ -28,7 +28,6 @@ Plug 'kristijanhusak/vim-carbon-now-sh'
 Plug 'majutsushi/tagbar'
 Plug 'mhinz/vim-startify'
 Plug 'mhinz/vim-signify'
-Plug 'dbgx/lldb.nvim'
 Plug 'iamcco/markdown-preview.vim'
 Plug 'junegunn/goyo.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -298,13 +297,28 @@ nnoremap <silent> <C-j> <ESC>:TmuxNavigateDown<CR>
 nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
 nnoremap <silent> <leader>path :call system("xclip -sel clip", @%)<CR>
 nnoremap <silent> <leader>t :TagbarToggle<CR>
-fun! Xclip() range
-  let l:_a = @a
-  exec a:firstline . ',' . a:lastline . 'yank'
-  exec a:firstline . ',' . a:lastline . 'w !$HOME/www/dotfiles/yank.sh'
-  let @a = l:_a
-endfun
-vnoremap <silent>y :call Xclip()<CR><CR>
+
+function! s:get_visual_selection()
+    " Why is this not a built-in Vim script function?!
+    let [line_start, column_start] = getpos("'<")[1:2]
+    let [line_end, column_end] = getpos("'>")[1:2]
+    let lines = getline(line_start, line_end)
+    if len(lines) == 0
+        return ''
+    endif
+    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+    let lines[0] = lines[0][column_start - 1:]
+    return join(lines, "\n")
+endfunction
+
+function! Xclip() range
+  let l:selected=s:get_visual_selection()
+  echom l:selected
+  call setreg("*", l:selected)
+  call system("xclip -sel clip", l:selected)
+  call system("~/www/dotfiles/yank.sh", l:selected)
+endfunction
+vnoremap <silent>y :<c-u>call Xclip()<CR>
 let vim_markdown_preview_hotkey='<C-r>'
 let vim_markdown_preview_github=1
 "========================================================
