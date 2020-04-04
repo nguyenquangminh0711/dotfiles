@@ -21,7 +21,6 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'vim-scripts/git-time-lapse'
 Plug 'benmills/vimux'
-Plug 'dense-analysis/ale'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'brooth/far.vim'
 Plug 'kristijanhusak/vim-carbon-now-sh'
@@ -94,49 +93,16 @@ let g:UltiSnipsExpandTrigger="<c-k>"
 let g:UltiSnipsJumpForwardTrigger="<c-b>"
 let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 "========================================================
-" CONFIG ALE
-"========================================================
-" let g:ale_fixers = {
-" \ 'ruby': ['rubocop']
-" \ }
-" let g:ale_linters = {
-" \   'javascript': ['eslint'],
-" \   'c': ["clang"],
-" \}
-let g:ale_c_clang_options = "-std=c11 -Wall"
-let g:ale_lint_on_text_changed="never"
-let g:ale_echo_cursor = 1
-let g:ale_echo_msg_error_str = 'E'
-let g:ale_echo_msg_warning_str = 'W'
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-let g:ale_set_highlights = 0
-let g:ale_set_loclist = 0
-let g:ale_set_quickfix = 1
-highlight SignColumn guibg=255
-"========================================================
 " CONFIG LIGHTLINE
 "========================================================
-function! LinterStatus() abort
-    let l:counts = ale#statusline#Count(bufnr(''))
-
-    let l:all_errors = l:counts.error + l:counts.style_error
-    let l:all_non_errors = l:counts.total - l:all_errors
-
-    return l:counts.total == 0 ? '✓' : printf(
-    \   'Linter %d🚸 %d⛔️',
-    \   all_non_errors,
-    \   all_errors
-    \)
-endfunction
-
 let g:lightline = {
       \ 'colorscheme': 'deepspace',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'readonly', 'filename', 'modified', 'alestatus'] ]
+      \             [ 'readonly', 'filename', 'modified', 'cocstatus'] ]
       \ },
       \ 'component_function': {
-      \   'alestatus': 'LinterStatus'
+      \   'cocstatus': 'CocStatus',
       \ },
       \ }
 "========================================================
@@ -161,23 +127,40 @@ set shortmess+=c
 " always show signcolumns
 set signcolumn=yes
 
-nnoremap <silent> gj :call CocAction('jumpDefinition')<CR>
-nnoremap <silent> gd :call <SID>show_documentation()<CR>
-nnoremap <silent> gr :call CocAction('jumpReferences')<CR>
-nnoremap <silent> gf :call CocAction('format')<CR>
-vnoremap <silent> gf :call CocAction('formatSelected')<CR>
-nnoremap <silent> gz :call CocAction('fold', <f-args>)<CR>
+function! CallCocAction()
+  let l:action = input("Enter action: ")
+  call CocAction(l:action)
+endfunction
 
-" Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-function! s:show_documentation()
+function! s:ShowCocDocumentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
   else
     call CocAction('doHover')
   endif
 endfunction
+
+function! CocStatus() abort
+  let info = get(b:, 'coc_diagnostic_info', {})
+  if empty(info) | return '' | endif
+  let msgs = []
+  if get(info, 'error', 0)
+    call add(msgs, '⛔️ '. info['error'])
+  endif
+  if get(info, 'warning', 0)
+    call add(msgs, '🚸 '. info['warning'])
+  endif
+  return join(msgs, ' ') . ' ' . get(g:, 'coc_status', '')
+endfunction
+
+nnoremap <silent> ga :call CallCocAction()<CR>
+nnoremap <silent> gj :call CocAction('jumpDefinition')<CR>
+nnoremap <silent> gd :call ShowCocDocumentation()<CR>
+nnoremap <silent> gr :call CocAction('jumpReferences')<CR>
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 "========================================================
 " CONFIG MISC
 "========================================================
@@ -260,8 +243,8 @@ let test#ruby#rspec#executable = 'bundle exec rspec'
 "========================================================
 " MAPPING EASYALIGN
 "========================================================
-xmap ga <Plug>(EasyAlign)
-nmap ga <Plug>(EasyAlign)
+xmap a <Plug>(EasyAlign)
+nmap a <Plug>(EasyAlign)
 "========================================================
 " MAPPING GIT
 "========================================================
@@ -295,7 +278,7 @@ nnoremap <silent> <C-l> <ESC>:TmuxNavigateRight<CR>
 nnoremap <silent> <C-k> <ESC>:TmuxNavigateUp<CR>
 nnoremap <silent> <C-j> <ESC>:TmuxNavigateDown<CR>
 nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
-nnoremap <silent> <leader>path :call system("xclip -sel clip", @%)<CR>
+nnoremap <silent> <leader>path :call system("xclip -sel clip", expand('%:p'))<CR>
 nnoremap <silent> <leader>t :TagbarToggle<CR>
 
 function! s:get_visual_selection()
