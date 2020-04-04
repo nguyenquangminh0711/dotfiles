@@ -132,7 +132,7 @@ function! CallCocAction()
   call CocAction(l:action)
 endfunction
 
-function! s:ShowCocDocumentation()
+function! ShowCocDocumentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
   else
@@ -161,6 +161,11 @@ nnoremap <silent> gr :call CocAction('jumpReferences')<CR>
 " Highlight symbol under cursor on CursorHold
 autocmd CursorHold * silent call CocActionAsync('highlight')
 autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
+autocmd BufWritePre *.go :call CocAction('format')
+
+" Custom highlights
+highlight CocErrorLine guibg=darkred
+highlight CocHighlightText guibg=#444444
 "========================================================
 " CONFIG MISC
 "========================================================
