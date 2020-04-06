@@ -34,8 +34,6 @@ Plug 'neoclide/coc-neco'
 Plug 'derekwyatt/vim-scala'
 Plug 'justinmk/vim-sneak'
 Plug 'elzr/vim-json'
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
 Plug 'MaxMEllon/vim-jsx-pretty'
 call plug#end()
 "========================================================
@@ -164,8 +162,13 @@ autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 autocmd BufWritePre *.go :call CocAction('format')
 
 " Custom highlights
-highlight CocErrorLine guibg=darkred
+highlight CocErrorLine guibg=#444444
+highlight CocWarningLine guibg=#444444
 highlight CocHighlightText guibg=#444444
+
+" Coc snippets
+imap <C-b> <Plug>(coc-snippets-expand)
+map <C-b> :CocCommand snippets.editSnippets<CR>
 "========================================================
 " CONFIG MISC
 "========================================================
@@ -301,7 +304,6 @@ endfunction
 
 function! Xclip() range
   let l:selected=s:get_visual_selection()
-  echom l:selected
   call setreg("*", l:selected)
   call system("xclip -sel clip", l:selected)
   call system("~/www/dotfiles/yank.sh", l:selected)
