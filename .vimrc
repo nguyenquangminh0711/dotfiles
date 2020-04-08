@@ -32,9 +32,9 @@ Plug 'junegunn/goyo.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'neoclide/coc-neco'
 Plug 'derekwyatt/vim-scala'
-Plug 'justinmk/vim-sneak'
 Plug 'elzr/vim-json'
 Plug 'MaxMEllon/vim-jsx-pretty'
+Plug 'MattesGroeger/vim-bookmarks'
 call plug#end()
 "========================================================
 " EDITOR CONFIGS
@@ -84,12 +84,6 @@ colorscheme deep-space
 "========================================================
 let g:python_host_prog = '/usr/bin/python'
 let g:python3_host_prog = '/usr/bin/python3'
-"========================================================
-" CONFIG SNIPPETS
-"========================================================
-let g:UltiSnipsExpandTrigger="<c-k>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 "========================================================
 " CONFIG LIGHTLINE
 "========================================================
@@ -153,6 +147,8 @@ endfunction
 
 nnoremap <silent> ga :call CallCocAction()<CR>
 nnoremap <silent> gj :call CocAction('jumpDefinition')<CR>
+nnoremap <silent> gJv :call CocAction('jumpDefinition', 'vsplit')<CR>
+nnoremap <silent> gJs :call CocAction('jumpDefinition', 'split')<CR>
 nnoremap <silent> gd :call ShowCocDocumentation()<CR>
 nnoremap <silent> gr :call CocAction('jumpReferences')<CR>
 
@@ -167,12 +163,21 @@ highlight CocWarningLine guibg=#444444
 highlight CocHighlightText guibg=#444444
 
 " Coc snippets
-imap <C-b> <Plug>(coc-snippets-expand)
-map <C-b> :CocCommand snippets.editSnippets<CR>
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+let g:coc_snippet_next = '<tab>'
 "========================================================
 " CONFIG MISC
 "========================================================
-let g:sneak#label = 1
 " Auto pair
 let g:AutoPairsMultilineClose = 0
 let g:indentLine_enabled = 0
@@ -275,6 +280,70 @@ command! GitChangesFZF call fzf#run({
 \   'down':    '30%'
 \})
 "========================================================
+" BOOKMARKS
+"========================================================
+let g:bookmark_no_default_key_mappings = 1
+let g:bookmark_save_per_working_dir = 1
+let g:bookmark_highlight_lines = 1
+
+function! BookmarkFzfItem(line)
+  let lnr = split(v:val, ":")
+  return lnr[0].":".lnr[1].""."\t".join(lnr[2:], ":")
+endfunction
+
+function! BookmarkFzfSink(line)
+  let filename = split(a:line, '\t')[0]
+  let file = split(filename, ':')[0]
+  let line = split(filename, ':')[1]
+  execute "edit "."+".line." ".file
+endfunction
+
+function! BookmarkFzf()
+    call fzf#run({'source': map(bm#location_list(), 'BookmarkFzfItem(v:val)'), 'down': '30%', 'options': '--prompt "Bookmarks  >>>  "', 'sink': function('BookmarkFzfSink')})
+endfunction
+
+function! BookmarksStartifyItem(line)
+  let lnr = split(v:val, ":")
+  let filename = split(a:line, '\t')[0]
+  let file = split(filename, ':')[0]
+  let line = split(filename, ':')[1]
+  return {'line': lnr[0].":".lnr[1].""."\t".join(lnr[2:], ":"), 'cmd': "edit "."+".line." ".file}
+endfunction
+
+function! BookmarksStartifyList()
+  if len(bm#location_list()) == 0
+    call BookmarkLoad(g:bookmark_auto_save_file, 1, 0)
+  endif
+  return map(bm#location_list(), 'BookmarksStartifyItem(v:val)')
+endfunction
+" Finds the Git super-project directory.
+function! g:BMWorkDirFileLocation()
+    let filename = 'bookmarks'
+    let location = ''
+    if isdirectory('.git')
+        " Current work dir is git's work tree
+        let location = getcwd().'/.git'
+    else
+        " Look upwards (at parents) for a directory named '.git'
+        let location = finddir('.git', '.;')
+    endif
+    if len(location) > 0
+        return location.'/'.filename
+    else
+        return getcwd().'/.'.filename
+    endif
+endfunction
+
+nmap <leader>mm :BookmarkToggle<CR>
+nmap <leader>mi :BookmarkAnnotate<CR>
+nmap <leader>mn :BookmarkNext<CR>
+nmap <leader>mp :BookmarkPrev<CR>
+nmap <silent> <leader>ma <ESC>:call BookmarkFzf()<CR>
+nmap <leader>mc :BookmarkClear<CR>
+nmap <leader>mx :BookmarkClearAll<CR>
+nmap <leader>mkk :BookmarkMoveUp
+nmap <leader>mjj :BookmarkMoveDown
+"========================================================
 " MAPPING MISC
 "========================================================
 nnoremap <silent> <CR> <ESC>:noh<CR>
@@ -340,12 +409,12 @@ nnoremap <leader>lb <Plug>LLBreakSwitch
 " STARTIFY CONFIGS
 "========================================================
 let g:startify_change_to_dir = 0
+let g:startify_session_dir = '~/.vim/session'
 let g:startify_session_persistence = 1
 let g:startify_lists = [
       \ { 'type': 'sessions',  'header': ['   Sessions']       },
       \ { 'type': 'dir',       'header': ['   MRU '. getcwd()] },
-      \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
-      \ { 'type': 'commands',  'header': ['   Commands']       },
+      \ { 'type': function('BookmarksStartifyList'), 'header': ['   Bookmarks'] }
       \ ]
 let g:startify_custom_header = [
       \'   _________            .___               .__            __                          .__',
