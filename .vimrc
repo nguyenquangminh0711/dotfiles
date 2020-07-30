@@ -209,8 +209,8 @@ let g:test#strategy = 'vimux'
 set timeoutlen=1000 ttimeoutlen=0
 if has("autocmd")
   autocmd FileType go set tabstop=8 shiftwidth=8 softtabstop=8
+  autocmd FileType c set tabstop=4 shiftwidth=4 softtabstop=4
   autocmd FileType xml set equalprg=xmllint\ --format\ -
-  autocmd BufWritePre * StripWhitespace
   autocmd BufEnter * autocmd! matchparen
 endif
 
@@ -222,7 +222,7 @@ let g:jsx_ext_required = 0
 "========================================================
 let g:fzf_tags_command = 'ctags -R --exclude=.git --exclude=node_modules'
 let $FZF_DEFAULT_COMMAND = 'rg --files --hidden'
-let g:fzf_preview_source=" --preview='bat {} --theme=zenburn --color=always'"
+let g:fzf_preview_source=" --preview='bat {} --color=always'"
 noremap <silent> <c-p> <ESC>:call fzf#vim#files('.', {'options': g:fzf_preview_source})<CR>
 noremap <silent> <leader>/ <ESC>:BLines<CR>
 noremap <leader>rg <ESC>:Rg<space>
@@ -366,6 +366,7 @@ nmap <leader>mjj :BookmarkMoveDown
 "========================================================
 " MAPPING MISC
 "========================================================
+let g:indentLine_enabled = 0
 nnoremap <silent> <CR> <ESC>:noh<CR>
 nnoremap <silent> <leader>' cs'"
 nnoremap <silent> <leader>" cs"'
