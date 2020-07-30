@@ -183,6 +183,18 @@ function! s:check_back_space() abort
 endfunction
 
 let g:coc_snippet_next = '<tab>'
+let g:ale_ruby_rubocop_executable = 'bundle'
+let g:ale_linter_aliases = {'rspec': ['ruby']}
+let g:ale_linters = {
+\ 'ruby': ['rubocop'],
+\ 'rspec': ['rubocop'],
+\}
+let g:ale_fixers = {
+\ '*': ['remove_trailing_lines', 'trim_whitespace'],
+\ 'ruby': ['rubocop'],
+\ 'rspec': ['rubocop'],
+\}
+let g:ale_fix_on_save = 1
 "========================================================
 " CONFIG MISC
 "========================================================
