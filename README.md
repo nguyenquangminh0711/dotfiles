@@ -1,5 +1,7 @@
 # My personal dotfiles
 
+This repo contains my personal dotfiles. I use Ubuntu (with i3). I love (Neo)vim. I work on Ruby, Golang, and C.
+
 ![Dotfiles](./Review.png)
 
 ## Setup guide
