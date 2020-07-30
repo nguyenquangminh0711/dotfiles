@@ -1,0 +1,2 @@
+! -- This points to the default looks Xresource root file.
+#include "~/.config/regolith/styles/lascaille/root"

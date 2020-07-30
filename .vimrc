@@ -376,7 +376,7 @@ nnoremap <silent> <C-l> <ESC>:TmuxNavigateRight<CR>
 nnoremap <silent> <C-k> <ESC>:TmuxNavigateUp<CR>
 nnoremap <silent> <C-j> <ESC>:TmuxNavigateDown<CR>
 nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
-nnoremap <silent> <leader>path :call system("xclip -sel clip", expand('%:p'))<CR>
+nnoremap <silent> <leader>path :call system("~/www/dotfiles/yank.sh", expand('%:p'))<CR>
 nnoremap <silent> <leader>t :TagbarToggle<CR>
 
 function! s:get_visual_selection()

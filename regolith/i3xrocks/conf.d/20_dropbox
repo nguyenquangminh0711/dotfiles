@@ -1,0 +1,3 @@
+[dropbox]
+command=~/www/dotfiles/dropbox-check.sh
+interval=5

@@ -1,0 +1,3 @@
+[input-source]
+command=~/www/dotfiles/input-source-check.sh
+interval=1
