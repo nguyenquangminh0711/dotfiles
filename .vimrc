@@ -8,7 +8,6 @@ Plug 'itchyny/lightline.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'tomtom/tcomment_vim'
 Plug 'mg979/vim-visual-multi'
-Plug 'ntpeters/vim-better-whitespace'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-endwise'
@@ -31,10 +30,13 @@ Plug 'iamcco/markdown-preview.vim'
 Plug 'junegunn/goyo.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'neoclide/coc-neco'
+Plug 'dense-analysis/ale'
 Plug 'derekwyatt/vim-scala'
 Plug 'elzr/vim-json'
 Plug 'MaxMEllon/vim-jsx-pretty'
 Plug 'MattesGroeger/vim-bookmarks'
+Plug 'Yggdroot/indentLine'
+Plug 'sheerun/vim-polyglot'
 call plug#end()
 "========================================================
 " EDITOR CONFIGS
@@ -55,7 +57,7 @@ set nofoldenable
 set ruler
 set expandtab
 set autoindent
-set clipboard=unnamed
+set clipboard=unnamedplus
 set splitright
 set splitbelow
 set ttyfast
@@ -78,6 +80,9 @@ let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
 set termguicolors
 let ayucolor="dark"
 colorscheme deep-space
+
+set ignorecase
+set smartcase
 
 "========================================================
 " CONFIG PYTHON
@@ -148,9 +153,12 @@ endfunction
 nnoremap <silent> ga :call CallCocAction()<CR>
 nnoremap <silent> gj :call CocAction('jumpDefinition')<CR>
 nnoremap <silent> gJv :call CocAction('jumpDefinition', 'vsplit')<CR>
+nnoremap <silent> gJV :call CocAction('jumpDefinition', 'vsplit')<CR>
 nnoremap <silent> gJs :call CocAction('jumpDefinition', 'split')<CR>
+nnoremap <silent> gJS :call CocAction('jumpDefinition', 'split')<CR>
 nnoremap <silent> gd :call ShowCocDocumentation()<CR>
 nnoremap <silent> gr :call CocAction('jumpReferences')<CR>
+nnoremap <silent> gl :CocList outline<CR>
 
 " Highlight symbol under cursor on CursorHold
 autocmd CursorHold * silent call CocActionAsync('highlight')
