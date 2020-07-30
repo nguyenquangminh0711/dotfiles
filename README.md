@@ -1,3 +1,7 @@
+# My personal dotfiles
+
+![Dotfiles](./Review.png)
+
 ## Setup guide
 
 - Install dependencies:
