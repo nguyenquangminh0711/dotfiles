@@ -11,6 +11,7 @@ zle -N edit-command-line
 [ -f ~/.zsh/aliases.sh ] && source ~/.zsh/aliases.sh
 # Store local secrets
 [ -f ~/.zsh/secrets.sh ] && source ~/.zsh/secrets.sh
+
 # FZF
 if (( $+commands[fzf] )); then
   # Setup fzf
@@ -32,6 +33,7 @@ fi
 # Autojump: git clone git@github.com:skywind3000/z.lua ~/.zsh/
 [ -f ~/.zsh/z.lua/z.lua ] && eval "$(lua ~/.zsh/z.lua/z.lua --init zsh enhanced)"
 # I use rbenv, not rvm
+export PATH="$HOME/.rbenv/bin:$PATH"
 if (( $+commands[rbenv] )); then
     eval "$(rbenv init -)"
 fi
@@ -85,3 +87,5 @@ export FZF_CTRL_R_OPTS="--exact --sort"
 bindkey '^xe' edit-command-line
 bindkey '^x^e' edit-command-line
 export SHELL=/usr/bin/zsh
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

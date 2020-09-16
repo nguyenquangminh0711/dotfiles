@@ -183,16 +183,18 @@ function! s:check_back_space() abort
 endfunction
 
 let g:coc_snippet_next = '<tab>'
-let g:ale_ruby_rubocop_executable = 'bundle'
+" let g:ale_ruby_rubocop_executable = 'bundle'
 let g:ale_linter_aliases = {'rspec': ['ruby']}
 let g:ale_linters = {
 \ 'ruby': ['rubocop'],
 \ 'rspec': ['rubocop'],
+\ 'c': [''],
 \}
 let g:ale_fixers = {
 \ '*': ['remove_trailing_lines', 'trim_whitespace'],
-\ 'ruby': ['rubocop'],
-\ 'rspec': ['rubocop'],
+\ 'ruby': ['remove_trailing_lines', 'trim_whitespace'],
+\ 'rspec': ['remove_trailing_lines', 'trim_whitespace'],
+\ 'c': ['remove_trailing_lines', 'trim_whitespace'],
 \}
 let g:ale_fix_on_save = 1
 "========================================================
@@ -398,7 +400,7 @@ function! Xclip() range
   call system("xclip -sel clip", l:selected)
   call system("~/www/dotfiles/yank.sh", l:selected)
 endfunction
-vnoremap <silent>y :<c-u>call Xclip()<CR>
+vnoremap <silent><leader>y :<c-u>call Xclip()<CR>
 let vim_markdown_preview_hotkey='<C-r>'
 let vim_markdown_preview_github=1
 "========================================================

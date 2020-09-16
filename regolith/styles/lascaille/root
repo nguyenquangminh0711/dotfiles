@@ -1,16 +1,16 @@
 ! -- Styles - Colors
-#include "~/.config/regolith/styles/lascaille/color"
+#include "/home/darkwing0711/.config/regolith/styles/lascaille/color"
 
 ! -- Styles - Fonts
-#include "~/.config/regolith/styles/lascaille/typeface"
+#include "/home/darkwing0711/.config/regolith/styles/lascaille/typeface"
 
 ! -- Styles - Theme
-#include "~/.config/regolith/styles/lascaille/theme"
+#include "/home/darkwing0711/.config/regolith/styles/lascaille/theme"
 
 ! -- Applications
 ! These files map values defined above into specific app settings.
-#include "~/.config/regolith/styles/lascaille/st-term"
-#include "~/.config/regolith/styles/lascaille/i3-wm"
-#include "~/.config/regolith/styles/i3xrocks"
-#include "~/.config/regolith/styles/rofi"
-#include "~/.config/regolith/styles/gnome"
+#include "/home/darkwing0711/.config/regolith/styles/lascaille/st-term"
+#include "/home/darkwing0711/.config/regolith/styles/lascaille/i3-wm"
+#include "/home/darkwing0711/.config/regolith/styles/i3xrocks"
+#include "/home/darkwing0711/.config/regolith/styles/rofi"
+#include "/home/darkwing0711/.config/regolith/styles/gnome"
