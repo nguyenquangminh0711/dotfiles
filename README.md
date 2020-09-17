@@ -114,3 +114,7 @@ git config --global core.excludesfile ~/.gitignore_global
     - `bat`
     - `rg`
     - `exa`
+
+- Setup Git && Github
+  - Setup Github public key
+  - https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification
