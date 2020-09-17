@@ -14,6 +14,10 @@ sudo apt-get install git xclip curl tmux ripgrep zsh lua5.3 cargo python3-pip cl
 
 - Clone this repository and `cd` into cloned folder
 
+```
+mkdir -p ~/www && git clone git@github.com:nguyenquangminh0711/dotfiles ~/www/
+```
+
 - Setup zsh
 
 ```bash
