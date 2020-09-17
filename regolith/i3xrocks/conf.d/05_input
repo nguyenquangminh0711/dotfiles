@@ -1,3 +1,3 @@
 [input-source]
-command=/home/darkwing0711/www/dotfiles/input-source-check.sh
+command=$HOME/www/dotfiles/input-source-check.sh
 interval=1
