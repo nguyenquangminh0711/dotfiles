@@ -72,7 +72,8 @@ set_from_resource $ws19 i3-wm.workspace.19.name "19"
 ###############################################################################
 
 ## Launch // Terminal // <> Enter ##
-bindsym $mod+Return exec /usr/bin/alacritty
+bindsym $mod+Return exec ~/.cargo/bin/alacritty
+bindsym Ctrl+space exec ~/www/dotfiles/input-source.sh
 
 ## Launch // Browser // <><Shift> Enter ##
 bindsym $mod+Shift+Return exec gtk-launch $(xdg-settings get default-web-browser)
@@ -124,7 +125,8 @@ bindsym $mod+9 workspace number $ws9
 bindsym $mod+0 workspace number $ws10
 
 ## Navigate // Next Workspace // <> Tab ##
-bindsym $mod+Tab workspace next
+# bindsym $mod+Tab workspace next
+bindsym $mod+Tab exec i3-alt-tab --next
 
 ## Navigate // Next Workspace // <><Alt> → ##
 bindsym $mod+$alt+Right workspace next

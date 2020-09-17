@@ -38,6 +38,8 @@ if (( $+commands[rbenv] )); then
     eval "$(rbenv init -)"
 fi
 
+# Cargo
+export PATH="$HOME/.cargo/bin:$PATH"
 
 ZSH_DISABLE_COMPFIX=true
 [ -z "$HISTFILE" ] && HISTFILE="$HOME/.zsh_history"

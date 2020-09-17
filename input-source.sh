@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [[ "$(ibus engine)" = "Unikey" ]]
+if [[ "$(ibus engine)" = "Bamboo" ]]
 then
   ibus engine xkb:us::eng
 else
-  ibus engine Unikey
+  ibus engine Bamboo
 fi

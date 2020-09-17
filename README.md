@@ -9,7 +9,7 @@ This repo contains my personal dotfiles. I use Ubuntu (with i3). I love (Neo)vim
 - Install dependencies:
 
 ```bash
-sudo apt-get install git xclip curl tmux ripgrep zsh lua5.3 python-pip python3-pip clang
+sudo apt-get install git xclip curl tmux ripgrep zsh lua5.3 cargo python3-pip clang libfontconfig1-dev automake libevent-dev htop xcb
 ```
 
 - Clone this repository and `cd` into cloned folder
@@ -21,6 +21,7 @@ mkdir -p "$HOME/.zsh"
 git clone https://github.com/sindresorhus/pure.git "$HOME/.zsh/pure"
 git clone git@github.com:zsh-users/zsh-syntax-highlighting.git $HOME/.zsh/zsh-syntax-highlighting.git
 git clone git@github.com:skywind3000/z.lua $HOME/.zsh/z.lua
+ln -s $(pwd)/.zshrc $HOME/.zshrc
 ```
 
 - Make `zsh` default terminal with `chsh`
@@ -30,6 +31,14 @@ git clone git@github.com:skywind3000/z.lua $HOME/.zsh/z.lua
 ```bash
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 git clone https://github.com/jimeh/tmux-themepack.git ~/.tmux-themepack
+ln -s $(pwd)/.tmux.conf $HOME/.tmux.conf
+```
+
+- Install alacritty
+
+```
+cargo install alacritty
+ln -s $(pwd)/alacritty.yml ~/.config/.alacritty.yml
 ```
 
 - Download and install nvim
@@ -67,3 +76,11 @@ pip3 install pynvim
 
 - Install Coc lang servers: https://github.com/neoclide/coc.nvim/wiki/Language-servers
 - Install lazygit
+- Install https://regolith-linux.org/docs/getting-started/install/
+- Symlink regolith config
+   ```
+   mkdir -p $HOME/.config/ && ln -s $(pwd)/regolith $HOME/.config/regolith
+   ```
+- Install https://github.com/moqmar/i3-alt-tab
+
+- Install `https://github.com/BambooEngine/ibus-bamboo`
