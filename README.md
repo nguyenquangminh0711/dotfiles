@@ -8,7 +8,7 @@ This repo contains my personal dotfiles. I use Ubuntu (with i3). I love (Neo)vim
 
 - Install dependencies:
 
-```bash
+```
 sudo apt-get install git xclip curl tmux ripgrep zsh lua5.3 cargo python3-pip clang libfontconfig1-dev automake libevent-dev htop xcb
 ```
 
@@ -20,7 +20,7 @@ mkdir -p ~/www && git clone git@github.com:nguyenquangminh0711/dotfiles ~/www/
 
 - Setup zsh
 
-```bash
+```
 mkdir -p "$HOME/.zsh"
 git clone https://github.com/sindresorhus/pure.git "$HOME/.zsh/pure"
 git clone git@github.com:zsh-users/zsh-syntax-highlighting.git $HOME/.zsh/zsh-syntax-highlighting.git
@@ -32,7 +32,7 @@ ln -s $(pwd)/.zshrc $HOME/.zshrc
 
 - Setup tmux
 
-```bash
+```
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 git clone https://github.com/jimeh/tmux-themepack.git ~/.tmux-themepack
 ln -s $(pwd)/.tmux.conf $HOME/.tmux.conf
@@ -47,19 +47,18 @@ ln -s $(pwd)/alacritty.yml ~/.config/.alacritty.yml
 
 - Download and install nvim
 
-```bash
+```
 sudo curl https://github.com/neovim/neovim/releases/download/v0.4.3/nvim.appimage -L --output /usr/local/bin/nvim
 sudo chmod +x /usr/local/bin/nvim
 mkdir -p $HOME/.config/nvim/
 sudo ln -s $(pwd)/.vimrc $HOME/.vimrc
 sudo ln -s $(pwd)/.vimrc $HOME/.config/nvim/init.vim
-curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 ```
 
 - Symlink vim to nvim
 
-```bash
+```
 sudo ln -s $(which nvim) /usr/local/bin/vim
 ```
 
@@ -69,7 +68,7 @@ sudo ln -s $(which nvim) /usr/local/bin/vim
 
 - Install python neovim:
 
-```bash
+```
 pip2 install pynvim
 pip3 install pynvim
 ```
@@ -91,6 +90,12 @@ mkdir -p $HOME/.config/ && ln -s $(pwd)/regolith $HOME/.config/regolith
 ```
 ! -- This points to the default looks Xresource root file.
 #include "$HOME/.config/regolith/styles/lascaille/root"
+```
+
+- Reload i3 with:
+
+```
+xrdb -merge ~/.Xresources-regolith && i3 reload
 ```
 
 - Ignored `compile_flags.txt` out of all repository
