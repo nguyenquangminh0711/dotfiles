@@ -126,7 +126,8 @@ bindsym $mod+0 workspace number $ws10
 
 ## Navigate // Next Workspace // <> Tab ##
 # bindsym $mod+Tab workspace next
-bindsym $mod+Tab exec i3-alt-tab --next
+# bindsym Mod1+Tab exec --no-startup-id rofi -modi combi -combi-modi window -show combi
+bindsym $mod+Tab exec --no-startup-id ~/www/dotfiles/alttab.sh
 
 ## Navigate // Next Workspace // <><Alt> → ##
 bindsym $mod+$alt+Right workspace next
