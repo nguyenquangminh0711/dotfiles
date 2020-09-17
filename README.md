@@ -81,6 +81,6 @@ pip3 install pynvim
    ```
    mkdir -p $HOME/.config/ && ln -s $(pwd)/regolith $HOME/.config/regolith
    ```
-- Install https://github.com/moqmar/i3-alt-tab
-
-- Install `https://github.com/BambooEngine/ibus-bamboo`
+- Install https://github.com/BambooEngine/ibus-bamboo
+- Install typora: https://support.typora.io/Typora-on-Linux/
+- Install dropbox: https://www.dropbox.com/install-linux

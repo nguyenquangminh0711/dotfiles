@@ -35,7 +35,7 @@ fi
 # I use rbenv, not rvm
 export PATH="$HOME/.rbenv/bin:$PATH"
 if (( $+commands[rbenv] )); then
-    eval "$(rbenv init -)"
+  eval "$(rbenv init -)"
 fi
 
 # Cargo
