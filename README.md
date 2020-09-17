@@ -79,17 +79,33 @@ pip3 install pynvim
   - https://golang.org/dl/
 
 - Install Coc lang servers: https://github.com/neoclide/coc.nvim/wiki/Language-servers
-- Install lazygit
 - Install https://regolith-linux.org/docs/getting-started/install/
 - Symlink regolith config
+
 ```
 mkdir -p $HOME/.config/ && ln -s $(pwd)/regolith $HOME/.config/regolith
 ```
+
 - Update .Xresources. `vim ~/.Xresources-regolith`
+
 ```
 ! -- This points to the default looks Xresource root file.
 #include "$HOME/.config/regolith/styles/lascaille/root"
 ```
+
+- Ignored `compile_flags.txt` out of all repository
+
+```
+echo "compile_flags.txt" >> ~/.gitignore_global
+git config --global core.excludesfile ~/.gitignore_global
+```
+
 - Install https://github.com/BambooEngine/ibus-bamboo
 - Install typora: https://support.typora.io/Typora-on-Linux/
 - Install dropbox: https://www.dropbox.com/install-linux
+- Install nice replacements for famous command lines
+    - `sudo apt-get install fd-find`
+    - `lazygit`
+    - `bat`
+    - `rg`
+    - `exa`
