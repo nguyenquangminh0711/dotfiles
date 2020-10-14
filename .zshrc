@@ -15,6 +15,7 @@ bindkey '^x^e' edit-command-line
 [ -f ~/.zsh/secrets.sh ] && source ~/.zsh/secrets.sh
 
 # FZF
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 if (( $+commands[fzf] )); then
   # Setup fzf
   # ---------
@@ -29,8 +30,6 @@ if (( $+commands[fzf] )); then
   # Key bindings
   # ------------
   source "$HOME/.fzf/shell/key-bindings.zsh"
-
-  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
   export FZF_TMUX=1
   export FZF_CTRL_T_OPTS="--exact"
   export FZF_CTRL_R_OPTS="--exact --sort"
@@ -103,3 +102,4 @@ export SHELL=/usr/bin/zsh
 
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.npm-global/bin:$PATH"
+export PATH="$HOME/.go/bin:$PATH"

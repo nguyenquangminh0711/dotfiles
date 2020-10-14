@@ -9,7 +9,7 @@ This repo contains my personal dotfiles. I use Ubuntu (with i3). I love (Neo)vim
 - Install dependencies:
 
 ```
-sudo apt-get install git xclip curl tmux ripgrep zsh lua5.3 cargo python3-pip clang libfontconfig1-dev automake libevent-dev htop xcb
+sudo apt-get install git xclip curl tmux ripgrep zsh lua5.3 cargo python3-pip clang libfontconfig1-dev automake libevent-dev htop xcb libxml2-utils
 ```
 
 - Clone this repository and `cd` into cloned folder
@@ -89,7 +89,7 @@ mkdir -p $HOME/.config/ && ln -s $(pwd)/regolith $HOME/.config/regolith
 
 ```
 ! -- This points to the default looks Xresource root file.
-#include "$HOME/.config/regolith/styles/lascaille/root"
+#include ".config/regolith/styles/lascaille/root"
 ```
 
 - Reload i3 with:
