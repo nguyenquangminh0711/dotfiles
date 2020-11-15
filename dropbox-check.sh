@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ "$(dropbox status | head)" =~ "Up to date" ]]; then
-  echo "📦 ✔️"
+  echo ""
 else
-  echo "📦 ↕️"
+  echo "$(dropbox status)"
 fi

@@ -1,25 +1,25 @@
 ! Typeface: JetBrains Mono
-#define typeface_bar_glyph  JetBrains Mono Medium 12
-#define typeface_wm         pango:JetBrains Mono Medium 12
-#define typeface_bar        pango:JetBrains Mono Medium 12, Material Design Icons 12
-#define typeface_rofi       JetBrains Mono Medium 16
-#define typeface_terminal   JetBrains Mono:pixelsize=16:antialias=true:autohint=true
+#define typeface_bar_glyph  JetBrains Mono 12
+#define typeface_wm         pango:JetBrains Mono 12
+#define typeface_bar        pango:JetBrains Mono 12
+#define typeface_rofi       JetBrains Mono 12
+#define typeface_terminal   JetBrains Mono:pixelsize=12:antialias=true:autohint=true
 #define typeface_gnome_terminal JetBrains Mono 12
 
 #define typeface_bar_glyph_wifi 
 #define typeface_bar_glyph_wired 
-#define typeface_bar_glyph_up 
-#define typeface_bar_glyph_dn 
-#define typeface_bar_glyph_cpu 
-#define typeface_bar_glyph_battery_100 
-#define typeface_bar_glyph_battery_80 
-#define typeface_bar_glyph_battery_50 
-#define typeface_bar_glyph_battery_20 
-#define typeface_bar_glyph_battery_0 
-#define typeface_bar_glyph_battery_charging 
-#define typeface_bar_glyph_battery_ac 
+#define typeface_bar_glyph_up ▲
+#define typeface_bar_glyph_dn ▼
+#define typeface_bar_glyph_cpu √
+#define typeface_bar_glyph_battery_100 ●
+#define typeface_bar_glyph_battery_80 ◕
+#define typeface_bar_glyph_battery_50 ◑
+#define typeface_bar_glyph_battery_20 ◔
+#define typeface_bar_glyph_battery_0 ○
+#define typeface_bar_glyph_battery_charging ↺
+#define typeface_bar_glyph_battery_ac ⏻
 #define typeface_bar_glyph_battery_unknown 
-#define typeface_bar_glyph_time 
+#define typeface_bar_glyph_time 
 #define typeface_bar_glyph_workspace 
 #define typeface_bar_glyph_disk 
 

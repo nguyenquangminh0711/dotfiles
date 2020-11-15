@@ -1,0 +1,3 @@
+[dropbox]
+command=$HOME/www/dotfiles/memory-usage.sh
+interval=5

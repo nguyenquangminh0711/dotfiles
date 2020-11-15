@@ -1,3 +1,4 @@
 # Date Time
 [time]
+command=$HOME/www/dotfiles/time.sh
 interval=10

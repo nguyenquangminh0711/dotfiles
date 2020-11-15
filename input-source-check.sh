@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ "$(ibus engine)" =~ "eng" ]]; then
-  echo "🔤"
+  echo "eng"
 else
-  echo "🇻🇳"
+  echo "vn"
 fi

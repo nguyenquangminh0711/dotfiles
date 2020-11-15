@@ -1,3 +1,0 @@
-[wireguard]
-command=$HOME/www/dotfiles/wireguard-check.sh
-interval=5

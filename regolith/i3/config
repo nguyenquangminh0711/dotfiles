@@ -505,3 +505,6 @@ set_from_resource $i3-wm.program.2 i3-wm.program.2 :
 exec --no-startup-id $i3-wm.program.2
 set_from_resource $i3-wm.program.3 i3-wm.program.3 :
 exec --no-startup-id $i3-wm.program.3
+
+# Use gnone background wallpaper
+exec --no-startup-id gio cat "$(gsettings get org.gnome.desktop.background picture-uri | ruby -e 'require "cgi"; puts CGI.unescape(STDIN.read).gsub("file://","")[1..-3]')" | feh --bg-scale -

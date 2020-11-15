@@ -98,6 +98,13 @@ mkdir -p $HOME/.config/ && ln -s $(pwd)/regolith $HOME/.config/regolith
 xrdb -merge ~/.Xresources-regolith && i3 reload
 ```
 
+- Stop gnome desktop when restarting:
+
+```
+gsettings set org.gnome.gnome-flashback desktop false
+gsettings set org.gnome.gnome-flashback root-background true
+```
+
 - Ignored `compile_flags.txt` out of all repository
 
 ```

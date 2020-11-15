@@ -58,8 +58,8 @@ i3-wm.gaps.outer.size: i3wm_gaps_outer_size
 
 i3-wm.workspace.01.name: 1: Web
 i3-wm.workspace.02.name: 2: Terminal
-i3-wm.workspace.03.name: 3: Notes
-i3-wm.workspace.04.name: 4: Communication
+i3-wm.workspace.03.name: WORKSPACE_NAME(3, glyph_font, QUOTE(color_red), glyph)
+i3-wm.workspace.04.name: WORKSPACE_NAME(4, glyph_font, QUOTE(color_red), glyph)
 i3-wm.workspace.05.name: WORKSPACE_NAME(5, glyph_font, QUOTE(color_red), glyph)
 i3-wm.workspace.06.name: WORKSPACE_NAME(6, glyph_font, QUOTE(color_red), glyph)
 i3-wm.workspace.07.name: WORKSPACE_NAME(7, glyph_font, QUOTE(color_magenta), glyph)

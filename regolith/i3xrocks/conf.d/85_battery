@@ -4,4 +4,5 @@
 # You can specify the instance by adding:
 # instance=BAT0
 [battery]
+command=$HOME/www/dotfiles/battery.sh
 interval=10
