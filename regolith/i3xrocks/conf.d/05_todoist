@@ -1,0 +1,3 @@
+[todoist]
+command=$HOME/www/dotfiles/todoist-summary.sh
+interval=300
