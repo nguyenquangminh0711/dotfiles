@@ -2,7 +2,6 @@
 # Battery blocklet for Regolith
 # This script was adapted from https://github.com/hastinbe/i3blocks-battery-plus
 
-LABEL_COLOR=${label_color:-$(xrescat i3xrocks.label.color "#7B8394")}
 VALUE_FONT=${font:-$(xrescat i3xrocks.value.font "Source Code Pro Medium 13")}
 BUTTON=${button:-}
 
@@ -37,7 +36,7 @@ if [ -z "$BATT_PERCENT" ]; then
     exit 0
 elif [ "$CHARGE_STATE" == "charging" ]; then
     LABEL_ICON=$(xrescat i3xrocks.label.batterycharging C)
-    VALUE_COLOR=$(xrescat i3xrocks.label.color white)
+    VALUE_COLOR=$(xrescat i3xrocks.success.color)
 elif [ "$BATT_PERCENT" -ge 0 ] && [ "$BATT_PERCENT" -le 20 ]; then
     LABEL_ICON=$(xrescat i3xrocks.label.battery0 E)
     VALUE_COLOR=$(xrescat i3xrocks.critical.color red)
@@ -55,7 +54,7 @@ else
     VALUE_COLOR=$(xrescat i3xrocks.label.color white)
 fi
 
-ICON_SPAN="<span color=\"${LABEL_COLOR}\">$LABEL_ICON</span>"
+ICON_SPAN="<span color=\"${VALUE_COLOR}\">$LABEL_ICON</span>"
 VALUE_SPAN="<span font_desc=\"${VALUE_FONT}\" color=\"${VALUE_COLOR}\"> $BATT_PERCENT%</span>"
 
 echo "${ICON_SPAN}${VALUE_SPAN}"
