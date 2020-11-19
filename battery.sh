@@ -36,7 +36,8 @@ fi
 if [ -z "$BATT_PERCENT" ]; then
     exit 0
 elif [ "$CHARGE_STATE" == "charging" ]; then
-    LABEL_ICON=$(xrescat i3xrocks.label.up C)
+    LABEL_ICON=$(xrescat i3xrocks.label.batterycharging C)
+    VALUE_COLOR=$(xrescat i3xrocks.label.color white)
 elif [ "$BATT_PERCENT" -ge 0 ] && [ "$BATT_PERCENT" -le 20 ]; then
     LABEL_ICON=$(xrescat i3xrocks.label.battery0 E)
     VALUE_COLOR=$(xrescat i3xrocks.critical.color red)
