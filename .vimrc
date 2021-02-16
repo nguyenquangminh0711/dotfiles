@@ -6,6 +6,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'tyrannicaltoucan/vim-deep-space'
 Plug 'itchyny/lightline.vim'
 Plug 'scrooloose/nerdtree'
+Plug 'ryanoasis/vim-devicons'
 Plug 'tomtom/tcomment_vim'
 Plug 'mg979/vim-visual-multi'
 Plug 'jiangmiao/auto-pairs'
@@ -16,27 +17,21 @@ Plug 'janko-m/vim-test'
 Plug 'junegunn/vim-easy-align'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
+Plug 'shumphrey/fugitive-gitlab.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'vim-scripts/git-time-lapse'
 Plug 'benmills/vimux'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'brooth/far.vim'
-Plug 'kristijanhusak/vim-carbon-now-sh'
-Plug 'majutsushi/tagbar'
 Plug 'mhinz/vim-startify'
 Plug 'mhinz/vim-signify'
-Plug 'iamcco/markdown-preview.vim'
-Plug 'junegunn/goyo.vim'
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'neoclide/coc-neco'
 Plug 'dense-analysis/ale'
-Plug 'derekwyatt/vim-scala'
-Plug 'elzr/vim-json'
-Plug 'MaxMEllon/vim-jsx-pretty'
 Plug 'MattesGroeger/vim-bookmarks'
-Plug 'Yggdroot/indentLine'
 Plug 'sheerun/vim-polyglot'
+Plug 'google/vim-jsonnet'
+Plug  'eugen0329/vim-esearch'
 call plug#end()
 "========================================================
 " EDITOR CONFIGS
@@ -45,30 +40,40 @@ syntax on
 filetype on
 filetype indent on
 filetype plugin on
-set hlsearch
 set ai
-set ruler
-set linespace=1
-set gfn=DejaVu\ Sans\ Mono\ for\ Powerline:h13
-let g:auto_ctags = 1
-set breakindent
-set nofoldenable
-" set tags=./tags;,tags;
-set ruler
-set expandtab
 set autoindent
-set clipboard=unnamedplus
-set splitright
-set splitbelow
-set ttyfast
-set lazyredraw
-set laststatus=2
-set encoding=utf8
-set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Plus\ Nerd\ File\ Types:h11
 set background=dark
+set breakindent
 set bs=2 tabstop=2 shiftwidth=2 softtabstop=2
-set number
+set clipboard=unnamedplus
+set cmdheight=2
+set encoding=utf8
+set expandtab
+set gfn=DejaVu\ Sans\ Mono\ for\ Powerline:h13
+set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Plus\ Nerd\ File\ Types:h11
+set hidden
+set hlsearch
+set ignorecase
+set laststatus=2
+set lazyredraw
+set linespace=1
+set nobackup
+set nofoldenable
 set nosmd
+set nowritebackup
+set number
+set ruler
+set ruler
+set shortmess+=c
+set signcolumn=yes
+set smartcase
+set splitbelow
+set splitright
+set termguicolors
+set ttyfast
+set updatetime=300
+
+colorscheme deep-space
 
 " Fix iterm display
 let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
@@ -77,13 +82,6 @@ let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
 
 let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
-set termguicolors
-let ayucolor="dark"
-colorscheme deep-space
-
-set ignorecase
-set smartcase
-
 "========================================================
 " CONFIG PYTHON
 "========================================================
@@ -105,25 +103,6 @@ let g:lightline = {
 "========================================================
 " CONFIG COC.nvim
 "========================================================
-" if hidden is not set, TextEdit might fail.
-set hidden
-
-" Some servers have issues with backup files, see #649
-set nobackup
-set nowritebackup
-
-" Better display for messages
-set cmdheight=2
-
-" You will have bad experience for diagnostic messages when it's default 4000.
-set updatetime=300
-
-" don't give |ins-completion-menu| messages.
-set shortmess+=c
-
-" always show signcolumns
-set signcolumn=yes
-
 function! CallCocAction()
   let l:action = input("Enter action: ")
   call CocAction(l:action)
@@ -183,7 +162,9 @@ function! s:check_back_space() abort
 endfunction
 
 let g:coc_snippet_next = '<tab>'
-" let g:ale_ruby_rubocop_executable = 'bundle'
+"========================================================
+" CONFIG ALE
+"========================================================
 let g:ale_linter_aliases = {'rspec': ['ruby']}
 let g:ale_linters = {
 \ 'ruby': ['rubocop'],
@@ -199,44 +180,20 @@ let g:ale_fixers = {
 \}
 let g:ale_fix_on_save = 1
 "========================================================
-" CONFIG MISC
+" CONFIG FZF
 "========================================================
-" Auto pair
-let g:AutoPairsMultilineClose = 0
-let g:indentLine_enabled = 0
-" Tmux navigation
-let g:tmux_navigator_no_mappings = 1
-" Rpsec config
-let g:VimuxUseNearest = 0
-let g:test#strategy = 'vimux'
-set timeoutlen=1000 ttimeoutlen=0
-if has("autocmd")
-  autocmd FileType go set tabstop=8 shiftwidth=8 softtabstop=8
-  autocmd FileType c set tabstop=4 shiftwidth=4 softtabstop=4
-  autocmd FileType xml set equalprg=xmllint\ --format\ -
-  autocmd BufEnter * autocmd! matchparen
-endif
-
-let g:move_key_modifier = 'C'
-let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.html.eex,*.html.erb"
-let g:jsx_ext_required = 0
-"========================================================
-" MAPPING FZF
-"========================================================
-let g:fzf_tags_command = 'ctags -R --exclude=.git --exclude=node_modules'
 let $FZF_DEFAULT_COMMAND = 'rg --files --hidden'
-let g:fzf_preview_source=" --preview='bat {} --color=always'"
-noremap <silent> <c-p> <ESC>:call fzf#vim#files('.', {'options': g:fzf_preview_source})<CR>
-noremap <silent> <leader>/ <ESC>:BLines<CR>
-noremap <leader>rg <ESC>:Rg<space>
-noremap <c-]> <ESC>:call fzf#vim#tags(expand("<cword>"), {'options': '--exact'})<cr>
 let $FZF_DEFAULT_OPTS='--layout=reverse'
+let g:fzf_tags_command = 'ctags -R --exclude=.git --exclude=node_modules'
+let g:fzf_preview_source=" --preview='bat {} --color=always --style=plain'"
+noremap <silent> <c-p> <ESC>:call fzf#vim#files('.', {'options': g:fzf_preview_source})<CR>
+noremap <c-]> <ESC>:call fzf#vim#tags(expand("<cword>"), {'options': '--exact '})<cr>
 "Open FZF in floating window
 let g:fzf_layout = { 'window': 'call FzfFloatingWindow()' }
 function! FzfFloatingWindow()
-  let height = float2nr((&lines - 2) * 0.6) " lightline + status
+  let height = float2nr((&lines - 2) * 0.9) " lightline + status
   let row = float2nr((&lines - height) / 2)
-  let width = float2nr(&columns * 0.6)
+  let width = float2nr(&columns * 0.9)
   let col = float2nr((&columns - width) / 2)
 
   let opts = {
@@ -262,48 +219,74 @@ function! FzfFloatingWindow()
         \ signcolumn=no
 endfunction
 "========================================================
-" MAPPING NERDTree
+" CONFIG VIM ESEARCH
+"========================================================
+let g:esearch = {}
+let g:esearch.default_mappings = 0
+let g:esearch.name = '[esearch]'
+let g:esearch.regex   = 1
+let g:esearch.textobj = 0
+let g:esearch.case    = 'smart'
+
+function! EsearchFloatingWindow()
+  let height = float2nr((&lines - 2) * 0.9) " lightline + status
+  let row = float2nr((&lines - height) / 2)
+  let width = float2nr(&columns * 0.9)
+  let col = float2nr((&columns - width) / 2)
+
+  let opts = {
+        \ 'relative': 'editor',
+        \ 'row': row,
+        \ 'col': col,
+        \ 'width': width,
+        \ 'height': height
+        \ }
+
+  let buf = nvim_create_buf(v:false, v:true)
+  let win = nvim_open_win(buf, v:true, opts)
+endfunction
+let g:esearch.win_new = {esearch -> EsearchFloatingWindow()}
+autocmd User esearch_win_config autocmd BufLeave <buffer> quit
+
+let g:esearch.win_map = [
+ \ ['n', 'x',   '<plug>(esearch-win-split:reuse:stay):q<cr>'],
+ \ ['n', 'v',   '<plug>(esearch-win-vsplit:reuse:stay):q<cr>'],
+ \ ['n', '{',   '<plug>(esearch-win-jump:filename:up)'],
+ \ ['n', '}',   '<plug>(esearch-win-jump:filename:down)'],
+ \ ['n', 'J',   '<plug>(esearch-win-jump:entry:down)'],
+ \ ['n', 'K',   '<plug>(esearch-win-jump:entry:up)'],
+ \ ['n', 'r',   '<plug>(esearch-win-reload)'],
+ \ ['n', '<cr>', '<plug>(esearch-win-open)']
+ \]
+nmap <silent> <leader>ff <plug>(esearch)
+"========================================================
+" CONFIG NERDTree
 "========================================================
 noremap <silent> <leader>nt <ESC>:NERDTreeToggle<CR>
 noremap <silent> <leader>rev <ESC>:NERDTreeFind<CR>
 let NERDTreeMapOpenSplit = 'x'
 let NERDTreeMapOpenVSplit = 'v'
 "========================================================
-" MAPPING RSPEC
+" CONFIG RSPEC
 "========================================================
 noremap <Leader>tt :TestFile<CR>
 noremap <Leader>ts :TestNearest<CR>
 noremap <Leader>tl :TestLast<CR>
 noremap <Leader>ta :TestSuite<CR>
+let g:VimuxUseNearest = 0
+let g:test#strategy = 'vimux'
 let test#ruby#rspec#executable = 'bundle exec rspec'
 "========================================================
-" MAPPING EASYALIGN
+" CONFIG EASYALIGN
 "========================================================
 xmap a <Plug>(EasyAlign)
 nmap a <Plug>(EasyAlign)
 "========================================================
-" MAPPING GIT
+" CONFIG GIT
 "========================================================
 nnoremap <silent> <leader>gt :call TimeLapse() <cr>
-let g:reviewbase = $REVIEW_BASE
-nnoremap <silent> <c-d> :execute 'vert Gdiff '.g:reviewbase<cr>
-nnoremap <silent> <c-r> :GitChangesFZF<cr>
-function! s:open_review_file(line)
-  let keys = split(a:line, '\t')
-  bufdo bd
-  execute 'e '.keys[2]
-  execute 'vert Gdiff '.g:reviewbase
-endfunction
-
-command! GitChangesFZF call fzf#run({
-\   'source':  'git stat | sort -k3',
-\   'sink':    function('<sid>open_review_file'),
-\   'window': 'call FzfFloatingWindow()',
-\   'options': '--extended --nth=3..',
-\   'down':    '30%'
-\})
 "========================================================
-" BOOKMARKS
+" CONFIG BOOKMARKS
 "========================================================
 let g:bookmark_no_default_key_mappings = 1
 let g:bookmark_save_per_working_dir = 1
@@ -367,43 +350,40 @@ nmap <leader>mx :BookmarkClearAll<CR>
 nmap <leader>mkk :BookmarkMoveUp
 nmap <leader>mjj :BookmarkMoveDown
 "========================================================
-" MAPPING MISC
+" CONFIG MISC
 "========================================================
-let g:indentLine_enabled = 0
 nnoremap <silent> <CR> <ESC>:noh<CR>
-nnoremap <silent> <leader>' cs'"
-nnoremap <silent> <leader>" cs"'
 nnoremap <silent> <leader>u :UndotreeToggle<CR>
+
+" Tmux navigation
+let g:tmux_navigator_no_mappings = 1
 nnoremap <silent> <C-h> <ESC>:TmuxNavigateLeft<CR>
 nnoremap <silent> <C-l> <ESC>:TmuxNavigateRight<CR>
 nnoremap <silent> <C-k> <ESC>:TmuxNavigateUp<CR>
 nnoremap <silent> <C-j> <ESC>:TmuxNavigateDown<CR>
 nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
-nnoremap <silent> <leader>path :call system("~/www/dotfiles/yank.sh", expand('%:p'))<CR>
-nnoremap <silent> <leader>t :TagbarToggle<CR>
 
-function! s:get_visual_selection()
-    " Why is this not a built-in Vim script function?!
-    let [line_start, column_start] = getpos("'<")[1:2]
-    let [line_end, column_end] = getpos("'>")[1:2]
-    let lines = getline(line_start, line_end)
-    if len(lines) == 0
-        return ''
-    endif
-    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
-    let lines[0] = lines[0][column_start - 1:]
-    return join(lines, "\n")
-endfunction
+" Copy file path
+nmap <silent> <leader>path :let @+ = expand("%")<cr>
 
-function! Xclip() range
-  let l:selected=s:get_visual_selection()
-  call setreg("*", l:selected)
-  call system("xclip -sel clip", l:selected)
-  call system("~/www/dotfiles/yank.sh", l:selected)
-endfunction
-vnoremap <silent><leader>y :<c-u>call Xclip()<CR>
-let vim_markdown_preview_hotkey='<C-r>'
+" Vim surround
+nnoremap <silent> <leader>' cs'"
+nnoremap <silent> <leader>" cs"'
+
+" Auto pair
+let g:AutoPairsMultilineClose = 0
+set timeoutlen=1000 ttimeoutlen=0
+if has("autocmd")
+  autocmd FileType go set tabstop=8 shiftwidth=8 softtabstop=8
+  autocmd FileType c set tabstop=4 shiftwidth=4 softtabstop=4
+  autocmd FileType xml set equalprg=xmllint\ --format\ -
+  autocmd BufEnter * autocmd! matchparen
+endif
+
 let vim_markdown_preview_github=1
+let g:move_key_modifier = 'C'
+let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.html.eex,*.html.erb"
+let g:jsx_ext_required = 0
 "========================================================
 " CONFIG SIGNIFY
 "========================================================
@@ -418,19 +398,7 @@ highlight SignifySignAdd guibg=255
 highlight SignifySignDelete guibg=255
 highlight SignifySignChange guibg=255
 "========================================================
-" LLDB CONFIGS
-"========================================================
-nnoremap <silent> <leader>lld <ESC>:LLmode debug<CR>
-nnoremap <silent> <leader>llc <ESC>:LLmode code<CR>
-nnoremap <silent> <leader>lll <ESC>:LLsession load<CR>
-nnoremap <silent> <leader>lc <ESC>:LL continue<CR>
-nnoremap <silent> <leader>ln <ESC>:LL next<CR>
-nnoremap <silent> <leader>ls <ESC>:LL step<CR>
-nnoremap <silent> <leader>lp :LL print <C-R>=expand('<cword>')<CR>
-vnoremap <silent> <leader>lp :<C-U>LL print <C-R>=lldb#util#get_selection()<CR><CR>
-nnoremap <leader>lb <Plug>LLBreakSwitch
-"========================================================
-" STARTIFY CONFIGS
+" CONFIG STARTIFY
 "========================================================
 let g:startify_change_to_dir = 0
 let g:startify_session_dir = '~/.vim/session'
