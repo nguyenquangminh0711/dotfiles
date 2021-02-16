@@ -47,7 +47,7 @@ if (( $+commands[rbenv] )); then
 fi
 
 if (( $+commands[bat] )); then
-  alias cat="bat"
+  alias cat="bat --style=plain"
 fi
 
 if (( $+commands[exa] )); then

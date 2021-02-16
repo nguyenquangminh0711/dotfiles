@@ -27,11 +27,13 @@ Plug 'mhinz/vim-startify'
 Plug 'mhinz/vim-signify'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'antoinemadec/coc-fzf', {'branch': 'release'}
 Plug 'dense-analysis/ale'
 Plug 'MattesGroeger/vim-bookmarks'
 Plug 'sheerun/vim-polyglot'
 Plug 'google/vim-jsonnet'
-Plug  'eugen0329/vim-esearch'
+Plug 'eugen0329/vim-esearch'
+Plug 'yegappan/mru'
 call plug#end()
 "========================================================
 " EDITOR CONFIGS
@@ -129,15 +131,15 @@ function! CocStatus() abort
   return join(msgs, ' ') . ' ' . get(g:, 'coc_status', '')
 endfunction
 
-nnoremap <silent> ga :call CallCocAction()<CR>
+nnoremap <silent> ga :CocFzfList actions<CR>
 nnoremap <silent> gj :call CocAction('jumpDefinition')<CR>
 nnoremap <silent> gJv :call CocAction('jumpDefinition', 'vsplit')<CR>
 nnoremap <silent> gJV :call CocAction('jumpDefinition', 'vsplit')<CR>
-nnoremap <silent> gJs :call CocAction('jumpDefinition', 'split')<CR>
-nnoremap <silent> gJS :call CocAction('jumpDefinition', 'split')<CR>
+nnoremap <silent> gJx :call CocAction('jumpDefinition', 'split')<CR>
+nnoremap <silent> gJX :call CocAction('jumpDefinition', 'split')<CR>
 nnoremap <silent> gd :call ShowCocDocumentation()<CR>
-nnoremap <silent> gr :call CocAction('jumpReferences')<CR>
-nnoremap <silent> gl :CocList outline<CR>
+nnoremap <silent> gr <Plug>(coc-references)
+nnoremap <silent> gl :CocFzfList outline<CR>
 
 " Highlight symbol under cursor on CursorHold
 autocmd CursorHold * silent call CocActionAsync('highlight')
