@@ -184,11 +184,8 @@ let g:ale_fix_on_save = 1
 "========================================================
 let $FZF_DEFAULT_COMMAND = 'rg --files --hidden'
 let $FZF_DEFAULT_OPTS='--layout=reverse'
-let g:fzf_tags_command = 'ctags -R --exclude=.git --exclude=node_modules'
-let g:fzf_preview_source=" --preview='bat {} --color=always --style=plain'"
-noremap <silent> <c-p> <ESC>:call fzf#vim#files('.', {'options': g:fzf_preview_source})<CR>
-noremap <c-]> <ESC>:call fzf#vim#tags(expand("<cword>"), {'options': '--exact '})<cr>
-"Open FZF in floating window
+
+" Default all to a floating window
 let g:fzf_layout = { 'window': 'call FzfFloatingWindow()' }
 function! FzfFloatingWindow()
   let height = float2nr((&lines - 2) * 0.9) " lightline + status
@@ -218,6 +215,55 @@ function! FzfFloatingWindow()
         \ norelativenumber
         \ signcolumn=no
 endfunction
+
+" Search recent files
+function! FilterOldfiles(path_prefix) abort
+  let path_prefix = '\V'. escape(a:path_prefix, '\')
+  let counter     = 30
+  let entries     = {}
+  let oldfiles    = []
+
+  for fname in v:oldfiles
+    if counter <= 0
+      break
+    endif
+
+    let absolute_path = resolve(fname)
+    " filter duplicates, bookmarks and entries from the skiplist
+    if has_key(entries, absolute_path)
+          \ || !filereadable(absolute_path)
+          \ || match(absolute_path, path_prefix)
+      continue
+    endif
+    let relative_path = fnamemodify(absolute_path, ":~:.")
+
+    let entries[absolute_path]  = 1
+    let counter                -= 1
+    let oldfiles += [relative_path]
+  endfor
+
+  return oldfiles
+endfunction
+
+function! FzfRecentFiles()
+  return fzf#run(fzf#wrap({
+        \ 'source': FilterOldfiles(getcwd()),
+        \ 'options': [
+        \ '-m', '--header-lines', !empty(expand('%')),
+        \ '--prompt', 'Recent files> ',
+        \ "--preview", "bat {} --color=always --style=plain",
+        \ '--preview-window', 'down:50%'
+        \ ]}))
+endfunction
+noremap <silent> <c-r> <ESC>:call FzfRecentFiles()<CR>
+
+" Search ctags
+let g:fzf_tags_command = 'ctags -R --exclude=.git --exclude=node_modules'
+noremap <silent> <c-]> <ESC>:call fzf#vim#tags(expand("<cword>"), {'options': '--exact '})<cr>
+
+" Search files
+let g:fzf_preview_source=" --preview='bat {} --color=always --style=plain' --preview-window down:50%"
+noremap <silent> <c-p> <ESC>:call fzf#vim#files('.', {'options': g:fzf_preview_source})<CR>
 "========================================================
 " CONFIG VIM ESEARCH
 "========================================================
@@ -253,12 +299,15 @@ let g:esearch.win_map = [
  \ ['n', 'v',   '<plug>(esearch-win-vsplit:reuse:stay):q<cr>'],
  \ ['n', '{',   '<plug>(esearch-win-jump:filename:up)'],
  \ ['n', '}',   '<plug>(esearch-win-jump:filename:down)'],
- \ ['n', 'J',   '<plug>(esearch-win-jump:entry:down)'],
- \ ['n', 'K',   '<plug>(esearch-win-jump:entry:up)'],
+ \ ['n', 'j',   '<plug>(esearch-win-jump:entry:down)'],
+ \ ['n', 'k',   '<plug>(esearch-win-jump:entry:up)'],
  \ ['n', 'r',   '<plug>(esearch-win-reload)'],
  \ ['n', '<cr>', '<plug>(esearch-win-open)']
  \]
 nmap <silent> <leader>ff <plug>(esearch)
+
+highlight link esearchLineNr Comment
+highlight link esearchCursorLineNr esearchFilename
 "========================================================
 " CONFIG NERDTree
 "========================================================
@@ -308,20 +357,6 @@ function! BookmarkFzf()
     call fzf#run({'source': map(bm#location_list(), 'BookmarkFzfItem(v:val)'), 'down': '30%', 'options': '--prompt "Bookmarks  >>>  "', 'sink': function('BookmarkFzfSink')})
 endfunction
 
-function! BookmarksStartifyItem(line)
-  let lnr = split(v:val, ":")
-  let filename = split(a:line, '\t')[0]
-  let file = split(filename, ':')[0]
-  let line = split(filename, ':')[1]
-  return {'line': lnr[0].":".lnr[1].""."\t".join(lnr[2:], ":"), 'cmd': "edit "."+".line." ".file}
-endfunction
-
-function! BookmarksStartifyList()
-  if len(bm#location_list()) == 0
-    call BookmarkLoad(g:bookmark_auto_save_file, 1, 0)
-  endif
-  return map(bm#location_list(), 'BookmarksStartifyItem(v:val)')
-endfunction
 " Finds the Git super-project directory.
 function! g:BMWorkDirFileLocation()
     let filename = 'bookmarks'
@@ -403,10 +438,48 @@ highlight SignifySignChange guibg=255
 let g:startify_change_to_dir = 0
 let g:startify_session_dir = '~/.vim/session'
 let g:startify_session_persistence = 1
+let g:startify_session_number = 3
+let g:startify_session_sort = 1
+
+function! GetUniqueSessionName()
+  let path = fnamemodify(getcwd(), ':~:t')
+  let path = empty(path) ? 'no-project' : path
+  let branch = system('git branch --no-color --show-current 2>/dev/null')
+  let branch = empty(branch) ? '' : '-' . branch
+  return substitute(path . branch, '/', '-', 'g')
+endfunction
+autocmd VimLeavePre * silent execute 'SSave! ' . GetUniqueSessionName()
+
+function! StarifyBookmarkItem(line)
+  let lnr = split(v:val, ":")
+  let filename = split(a:line, '\t')[0]
+  let file = split(filename, ':')[0]
+  let line = split(filename, ':')[1]
+  return {'line': lnr[0].":".lnr[1].""."\t".join(lnr[2:], ":"), 'cmd': "edit "."+".line." ".file}
+endfunction
+
+function! StarifyBookmarks()
+  if len(bm#location_list()) == 0
+    call BookmarkLoad(g:bookmark_auto_save_file, 1, 0)
+  endif
+  return map(bm#location_list(), 'StarifyBookmarkItem(v:val)')
+endfunction
+
+function! StarifyGitModified()
+    let files = systemlist('git ls-files -m 2>/dev/null')
+    return map(files, "{'line': v:val, 'path': v:val}")
+endfunction
+
+function! StarifyGitUntracked()
+    let files = systemlist('git ls-files -o --exclude-standard 2>/dev/null')
+    return map(files, "{'line': v:val, 'path': v:val}")
+endfunction
 let g:startify_lists = [
-      \ { 'type': 'sessions',  'header': ['   Sessions']       },
-      \ { 'type': 'dir',       'header': ['   MRU '. getcwd()] },
-      \ { 'type': function('BookmarksStartifyList'), 'header': ['   Bookmarks'] }
+      \ { 'type': 'sessions',                      'header': ['   Sessions']       },
+      \ { 'type': 'dir',                           'header': ['   MRU '. getcwd()] },
+      \ { 'type': function('StarifyGitModified'),  'header': ['   Git modified']},
+      \ { 'type': function('StarifyGitUntracked'), 'header': ['   Git untracked']},
+      \ { 'type': function('StarifyBookmarks'),    'header': ['   Bookmarks'] }
       \ ]
 let g:startify_custom_header = [
       \'   _________            .___               .__            __                          .__',
