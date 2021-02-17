@@ -225,7 +225,7 @@ function! FilterOldfiles(path_prefix) abort
   let entries     = {}
   let oldfiles    = []
 
-  for fname in v:oldfiles
+  for fname in MruGetFiles()
     if counter <= 0
       break
     endif
@@ -266,6 +266,10 @@ noremap <silent> <c-]> <ESC>:call fzf#vim#tags(expand("<cword>"), {'options': '-
 " Search files
 let g:fzf_preview_source=" --preview='bat {} --color=always --style=plain' --preview-window down:50%"
 noremap <silent> <c-p> <ESC>:call fzf#vim#files('.', {'options': g:fzf_preview_source})<CR>
+
+" A backup searcher for esearch
+let g:fzf_preview_window = ['down:50%', 'ctrl-/']
+noremap <leader>fr <ESC>:Rg<space>
 "========================================================
 " CONFIG VIM ESEARCH
 "========================================================
