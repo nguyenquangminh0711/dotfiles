@@ -35,10 +35,15 @@ if (( $+commands[fzf] )); then
   export FZF_CTRL_R_OPTS="--exact --sort"
 fi
 
+# git clone https://github.com/Aloxaf/fzf-tab ~/.zsh/fzf-tab
+[ -f ~/.zsh/fzf-tab/fzf-tab.plugin.zsh ] && source ~/.zsh/fzf-tab/fzf-tab.plugin.zsh
+zstyle ':completion:*:git-checkout:*' sort false
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+
 # Sytax highlighting: git clone git@github.com:zsh-users/zsh-syntax-highlighting.git ~/.zsh/
 [ -f ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Autojump: git clone git@github.com:skywind3000/z.lua ~/.zsh/
-[ -f ~/.zsh/z.lua/z.lua ] && eval "$(lua ~/.zsh/z.lua/z.lua --init zsh enhanced)"
+[ -f ~/.zsh/z.lua/z.lua ] && eval "$(lua ~/.zsh/z.lua/z.lua --init zsh enhanced fzf)"
 
 # I use rbenv, not rvm
 export PATH="$HOME/.rbenv/bin:$PATH"

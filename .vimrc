@@ -296,19 +296,22 @@ function! EsearchFloatingWindow()
 
   let buf = nvim_create_buf(v:false, v:true)
   let win = nvim_open_win(buf, v:true, opts)
+
+  setlocal buftype=nofile
 endfunction
 let g:esearch.win_new = {esearch -> EsearchFloatingWindow()}
 autocmd User esearch_win_config autocmd BufLeave <buffer> quit
 
 let g:esearch.win_map = [
- \ ['n', 'x',   '<plug>(esearch-win-split:reuse:stay):q<cr>'],
- \ ['n', 'v',   '<plug>(esearch-win-vsplit:reuse:stay):q<cr>'],
+ \ ['n', 'x',   '<plug>(esearch-win-split:reuse:stay):q!<cr>'],
+ \ ['n', 'v',   '<plug>(esearch-win-vsplit:reuse:stay):q!<cr>'],
  \ ['n', '{',   '<plug>(esearch-win-jump:filename:up)'],
  \ ['n', '}',   '<plug>(esearch-win-jump:filename:down)'],
  \ ['n', 'j',   '<plug>(esearch-win-jump:entry:down)'],
  \ ['n', 'k',   '<plug>(esearch-win-jump:entry:up)'],
  \ ['n', 'r',   '<plug>(esearch-win-reload)'],
- \ ['n', '<cr>', '<plug>(esearch-win-open)']
+ \ ['n', '<cr>', '<plug>(esearch-win-open)'],
+ \ ['n', '<esc>', ':q!<cr>']
  \]
 nmap <silent> <leader>ff <plug>(esearch)
 
