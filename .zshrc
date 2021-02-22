@@ -13,6 +13,9 @@ bindkey '^x^e' edit-command-line
 [ -f ~/.zsh/aliases.sh ] && source ~/.zsh/aliases.sh
 # Store local secrets
 [ -f ~/.zsh/secrets.sh ] && source ~/.zsh/secrets.sh
+# Some useful scripts
+[ -d ~/.zsh/scripts ] && export PATH="$HOME/.zsh/scripts:$PATH"
+
 
 # FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
