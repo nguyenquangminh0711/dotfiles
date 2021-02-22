@@ -105,10 +105,14 @@ setopt inc_append_history     # add commands to HISTFILE in order of execution
 setopt share_history          # share command history data
 
 export TERM=xterm-256color
-export EDITOR='nvim'
-export SHELL=/usr/bin/zsh
+export SHELL=$(which zsh)
 
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="$HOME/.go/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+
+export EDITOR='nvim'
+alias vim="nvim"
+alias vi="nvim"
+alias oldvim="vim"

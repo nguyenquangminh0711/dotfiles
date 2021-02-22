@@ -25,6 +25,8 @@ mkdir -p "$HOME/.zsh"
 git clone https://github.com/sindresorhus/pure.git "$HOME/.zsh/pure"
 git clone git@github.com:zsh-users/zsh-syntax-highlighting.git $HOME/.zsh/zsh-syntax-highlighting.git
 git clone git@github.com:skywind3000/z.lua $HOME/.zsh/z.lua
+git clone https://github.com/Aloxaf/fzf-tab ~/.zsh/fzf-tab
+ln -s $(pwd)/scripts ~/.zsh/scripts
 ln -s $(pwd)/.zshrc $HOME/.zshrc
 ```
 
