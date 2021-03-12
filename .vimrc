@@ -34,6 +34,7 @@ Plug 'sheerun/vim-polyglot'
 Plug 'google/vim-jsonnet'
 Plug 'eugen0329/vim-esearch'
 Plug 'yegappan/mru'
+Plug 'dhruvasagar/vim-table-mode'
 call plug#end()
 "========================================================
 " EDITOR CONFIGS

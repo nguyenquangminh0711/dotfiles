@@ -1,0 +1,3 @@
+#!/bin/bash
+
+bundle exec rspec $(git diff --name-only HEAD $(git merge-base HEAD master) | grep "_spec.rb") $(git status --porcelain | grep "_spec.rb" | cut -c 4-)
