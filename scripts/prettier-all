@@ -1,0 +1,4 @@
+#!/bin/bash
+
+node_modules/.bin/prettier --write $(git diff --name-only HEAD $(git merge-base HEAD master) | grep ".js") $(git status --porcelain | grep ".js" | cut -c 4-) $(git diff --name-only HEAD $(git merge-base HEAD master) | grep ".vue") $(git status --porcelain | grep ".vue" | cut -c 4-)
+node_modules/.bin/eslint --max-warnings 0 --report-unused-disable-directives --fix --report-unused-disable-directives --no-inline-config $(git diff --name-only HEAD $(git merge-base HEAD master) | grep ".js") $(git status --porcelain | grep ".js" | cut -c 4-) $(git diff --name-only HEAD $(git merge-base HEAD master) | grep ".vue") $(git status --porcelain | grep ".vue" | cut -c 4-)
