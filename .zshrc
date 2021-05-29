@@ -110,9 +110,17 @@ export SHELL=$(which zsh)
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="$HOME/.go/bin:$PATH"
+export PATH=$(go env GOPATH)/bin:$PATH
 export PATH="$HOME/.local/bin:$PATH"
-
 export EDITOR='nvim'
+
+export GTK_IM_MODULE=ibus
+export QT_IM_MODULE=ibus
+export XMODIFIERS=@im=ibus
+export QT4_IM_MODULE=ibus
+export CLUTTER_IM_MODULE=ibus
+export GLFW_IM_MODULE=ibus
+
 alias vim="nvim"
 alias vi="nvim"
 alias oldvim="vim"

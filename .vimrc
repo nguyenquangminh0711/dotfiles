@@ -26,36 +26,18 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'mhinz/vim-startify'
 Plug 'mhinz/vim-signify'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'antoinemadec/coc-fzf', {'branch': 'release'}
-Plug 'dense-analysis/ale'
-Plug 'MattesGroeger/vim-bookmarks'
-Plug 'sheerun/vim-polyglot'
-Plug 'google/vim-jsonnet'
 Plug 'eugen0329/vim-esearch'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'yegappan/mru'
-Plug 'dhruvasagar/vim-table-mode'
+Plug 'hrsh7th/nvim-compe'
+Plug 'neovim/nvim-lspconfig'
+Plug 'dense-analysis/ale'
 call plug#end()
 "========================================================
 " EDITOR CONFIGS
 "========================================================
-syntax on
-filetype on
-filetype indent on
-filetype plugin on
-set ai
-set autoindent
-set background=dark
-set breakindent
-set bs=2 tabstop=2 shiftwidth=2 softtabstop=2
 set clipboard=unnamedplus
-set cmdheight=2
-set encoding=utf8
-set expandtab
-set gfn=DejaVu\ Sans\ Mono\ for\ Powerline:h13
-set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Plus\ Nerd\ File\ Types:h11
-set hidden
-set hlsearch
+set completeopt=menuone,noselect " Prerequisite for compe
 set ignorecase
 set laststatus=2
 set lazyredraw
@@ -65,16 +47,22 @@ set nofoldenable
 set nosmd
 set nowritebackup
 set number
-set ruler
-set ruler
 set shortmess+=c
 set signcolumn=yes
 set smartcase
 set splitbelow
 set splitright
 set termguicolors
+set timeoutlen=1000 ttimeoutlen=0
 set ttyfast
 set updatetime=300
+
+if has("autocmd")
+  autocmd FileType ruby set tabstop=2 shiftwidth=2 softtabstop=2
+  autocmd FileType go set tabstop=8 shiftwidth=8 softtabstop=8
+  autocmd FileType c set tabstop=4 shiftwidth=4 softtabstop=4
+  autocmd BufEnter * autocmd! matchparen
+endif
 
 colorscheme deep-space
 "========================================================
@@ -89,74 +77,60 @@ let g:lightline = {
       \ 'colorscheme': 'deepspace',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'readonly', 'filename', 'modified', 'cocstatus'] ]
-      \ },
-      \ 'component_function': {
-      \   'cocstatus': 'CocStatus',
-      \ },
+      \             [ 'readonly', 'filename', 'modified'] ]
+      \ }
       \ }
 "========================================================
-" CONFIG COC.nvim
+" CONFIG LSP
 "========================================================
-function! CallCocAction()
-  let l:action = input("Enter action: ")
-  call CocAction(l:action)
-endfunction
+lua <<EOF
+local nvim_lsp = require('lspconfig')
+require'lspconfig'.solargraph.setup{}
+require'lspconfig'.gopls.setup{}
 
-function! ShowCocDocumentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
-function! CocStatus() abort
-  let info = get(b:, 'coc_diagnostic_info', {})
-  if empty(info) | return '' | endif
-  let msgs = []
-  if get(info, 'error', 0)
-    call add(msgs, '⛔️ '. info['error'])
-  endif
-  if get(info, 'warning', 0)
-    call add(msgs, '🚸 '. info['warning'])
-  endif
-  return join(msgs, ' ') . ' ' . get(g:, 'coc_status', '')
-endfunction
+  local opts = { noremap=true, silent=true }
 
-nnoremap <silent> ga :CocFzfList actions<CR>
-nnoremap <silent> gj :call CocAction('jumpDefinition')<CR>
-nnoremap <silent> gJv :call CocAction('jumpDefinition', 'vsplit')<CR>
-nnoremap <silent> gJV :call CocAction('jumpDefinition', 'vsplit')<CR>
-nnoremap <silent> gJx :call CocAction('jumpDefinition', 'split')<CR>
-nnoremap <silent> gJX :call CocAction('jumpDefinition', 'split')<CR>
-nnoremap <silent> gd :call ShowCocDocumentation()<CR>
-nnoremap <silent> gr <Plug>(coc-references)
-nnoremap <silent> gl :CocFzfList outline<CR>
+  buf_set_keymap('n', '<C-]>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  buf_set_keymap('n', 'gn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  buf_set_keymap("n", "gf", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+end
 
-" Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
-autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
-autocmd BufWritePre *.go :call CocAction('format')
+local servers = { "pyright", "rust_analyzer", "tsserver" , "gopls", "solargraph"}
+for _, lsp in ipairs(servers) do
+  nvim_lsp[lsp].setup { on_attach = on_attach }
+end
+require'compe'.setup {
+  enabled = true;
+  autocomplete = true;
+  debug = false;
+  min_length = 1;
+  preselect = 'enable';
+  throttle_time = 80;
+  source_timeout = 200;
+  incomplete_delay = 400;
+  max_abbr_width = 100;
+  max_kind_width = 100;
+  max_menu_width = 100;
+  documentation = true;
 
-" Custom highlights
-highlight CocErrorLine guibg=#444444
-highlight CocWarningLine guibg=#444444
-highlight CocHighlightText guibg=#444444
-
-" Coc snippets
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? coc#_select_confirm() :
-      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-let g:coc_snippet_next = '<tab>'
+  source = {
+    path = true;
+    buffer = true;
+    calc = true;
+    nvim_lsp = true;
+    nvim_lua = true;
+    vsnip = true;
+    ultisnips = true;
+  };
+}
+EOF
 "========================================================
 " CONFIG ALE
 "========================================================
@@ -173,6 +147,7 @@ let g:ale_fixers = {
 \ 'rspec': ['remove_trailing_lines', 'trim_whitespace'],
 \ 'c': ['remove_trailing_lines', 'trim_whitespace'],
 \}
+let g:ale_disable_lsp = 1
 let g:ale_fix_on_save = 1
 "========================================================
 " CONFIG FZF
@@ -251,10 +226,6 @@ function! FzfRecentFiles()
         \ ]}))
 endfunction
 noremap <silent> <c-r> <ESC>:call FzfRecentFiles()<CR>
-
-" Search ctags
-let g:fzf_tags_command = 'ctags -R --exclude=.git --exclude=node_modules'
-noremap <silent> <c-]> <ESC>:call fzf#vim#tags(expand("<cword>"), {'options': '--exact '})<cr>
 
 " Search files
 let g:fzf_preview_source=" --preview='bat {} --color=always --style=plain' --preview-window down:50%"
@@ -337,56 +308,6 @@ nmap a <Plug>(EasyAlign)
 "========================================================
 nnoremap <silent> <leader>gt :call TimeLapse() <cr>
 "========================================================
-" CONFIG BOOKMARKS
-"========================================================
-let g:bookmark_no_default_key_mappings = 1
-let g:bookmark_save_per_working_dir = 1
-let g:bookmark_highlight_lines = 1
-
-function! BookmarkFzfItem(line)
-  let lnr = split(v:val, ":")
-  return lnr[0].":".lnr[1].""."\t".join(lnr[2:], ":")
-endfunction
-
-function! BookmarkFzfSink(line)
-  let filename = split(a:line, '\t')[0]
-  let file = split(filename, ':')[0]
-  let line = split(filename, ':')[1]
-  execute "edit "."+".line." ".file
-endfunction
-
-function! BookmarkFzf()
-    call fzf#run({'source': map(bm#location_list(), 'BookmarkFzfItem(v:val)'), 'down': '30%', 'options': '--prompt "Bookmarks  >>>  "', 'sink': function('BookmarkFzfSink')})
-endfunction
-
-" Finds the Git super-project directory.
-function! g:BMWorkDirFileLocation()
-    let filename = 'bookmarks'
-    let location = ''
-    if isdirectory('.git')
-        " Current work dir is git's work tree
-        let location = getcwd().'/.git'
-    else
-        " Look upwards (at parents) for a directory named '.git'
-        let location = finddir('.git', '.;')
-    endif
-    if len(location) > 0
-        return location.'/'.filename
-    else
-        return getcwd().'/.'.filename
-    endif
-endfunction
-
-nmap <leader>mm :BookmarkToggle<CR>
-nmap <leader>mi :BookmarkAnnotate<CR>
-nmap <leader>mn :BookmarkNext<CR>
-nmap <leader>mp :BookmarkPrev<CR>
-nmap <silent> <leader>ma <ESC>:call BookmarkFzf()<CR>
-nmap <leader>mc :BookmarkClear<CR>
-nmap <leader>mx :BookmarkClearAll<CR>
-nmap <leader>mkk :BookmarkMoveUp
-nmap <leader>mjj :BookmarkMoveDown
-"========================================================
 " CONFIG MISC
 "========================================================
 nnoremap <silent> <CR> <ESC>:noh<CR>
@@ -403,20 +324,8 @@ nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
 " Copy file path
 nmap <silent> <leader>path :let @+ = expand("%")<cr>
 
-" Vim surround
-nnoremap <silent> <leader>' cs'"
-nnoremap <silent> <leader>" cs"'
-
 " Auto pair
 let g:AutoPairsMultilineClose = 0
-set timeoutlen=1000 ttimeoutlen=0
-if has("autocmd")
-  autocmd FileType go set tabstop=8 shiftwidth=8 softtabstop=8
-  autocmd FileType c set tabstop=4 shiftwidth=4 softtabstop=4
-  autocmd FileType xml set equalprg=xmllint\ --format\ -
-  autocmd BufEnter * autocmd! matchparen
-endif
-
 let vim_markdown_preview_github=1
 let g:move_key_modifier = 'C'
 let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.html.eex,*.html.erb"
@@ -450,22 +359,8 @@ function! GetUniqueSessionName()
   let branch = empty(branch) ? '' : '-' . branch
   return substitute(path . branch, '/', '-', 'g')
 endfunction
+" Don't forget to create ~/.vim/session, or vim requires an extra enter when exit
 autocmd VimLeavePre * silent execute 'SSave! ' . GetUniqueSessionName()
-
-function! StarifyBookmarkItem(line)
-  let lnr = split(v:val, ":")
-  let filename = split(a:line, '\t')[0]
-  let file = split(filename, ':')[0]
-  let line = split(filename, ':')[1]
-  return {'line': lnr[0].":".lnr[1].""."\t".join(lnr[2:], ":"), 'cmd': "edit "."+".line." ".file}
-endfunction
-
-function! StarifyBookmarks()
-  if len(bm#location_list()) == 0
-    call BookmarkLoad(g:bookmark_auto_save_file, 1, 0)
-  endif
-  return map(bm#location_list(), 'StarifyBookmarkItem(v:val)')
-endfunction
 
 function! StarifyGitModified()
     let files = systemlist('git ls-files -m 2>/dev/null')
@@ -481,7 +376,6 @@ let g:startify_lists = [
       \ { 'type': 'dir',                           'header': ['   MRU '. getcwd()] },
       \ { 'type': function('StarifyGitModified'),  'header': ['   Git modified']},
       \ { 'type': function('StarifyGitUntracked'), 'header': ['   Git untracked']},
-      \ { 'type': function('StarifyBookmarks'),    'header': ['   Bookmarks'] }
       \ ]
 let g:startify_custom_header = [
       \'   _________            .___               .__            __                          .__',
