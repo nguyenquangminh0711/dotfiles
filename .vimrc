@@ -28,6 +28,7 @@ Plug 'mhinz/vim-signify'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'eugen0329/vim-esearch'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'google/vim-jsonnet'
 Plug 'yegappan/mru'
 Plug 'hrsh7th/nvim-compe'
 Plug 'neovim/nvim-lspconfig'
@@ -56,9 +57,12 @@ set termguicolors
 set timeoutlen=1000 ttimeoutlen=0
 set ttyfast
 set updatetime=300
+set encoding=utf-8
 
 if has("autocmd")
+  autocmd FileType jsonnet set tabstop=2 shiftwidth=2 softtabstop=2
   autocmd FileType ruby set tabstop=2 shiftwidth=2 softtabstop=2
+  autocmd FileType python set tabstop=2 shiftwidth=2 softtabstop=2
   autocmd FileType go set tabstop=8 shiftwidth=8 softtabstop=8
   autocmd FileType c set tabstop=4 shiftwidth=4 softtabstop=4
   autocmd BufEnter * autocmd! matchparen
@@ -87,6 +91,7 @@ lua <<EOF
 local nvim_lsp = require('lspconfig')
 require'lspconfig'.solargraph.setup{}
 require'lspconfig'.gopls.setup{}
+require'lspconfig'.jedi_language_server.setup{}
 
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
@@ -94,15 +99,15 @@ local on_attach = function(client, bufnr)
 
   local opts = { noremap=true, silent=true }
 
-  buf_set_keymap('n', '<C-]>', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', 'gh', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', 'gj', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   buf_set_keymap('n', 'gn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   buf_set_keymap("n", "gf", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 end
 
-local servers = { "pyright", "rust_analyzer", "tsserver" , "gopls", "solargraph"}
+local servers = { "jedi_language_server", "rust_analyzer", "tsserver" , "gopls", "solargraph"}
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
@@ -137,13 +142,14 @@ EOF
 let g:ale_linter_aliases = {'rspec': ['ruby']}
 let g:ale_linters = {
 \ 'ruby': ['rubocop'],
+\ 'python': ['flake8'],
 \ 'rspec': ['rubocop'],
 \ 'c': [''],
 \ 'cpp': [''],
 \}
 let g:ale_fixers = {
 \ '*': ['remove_trailing_lines', 'trim_whitespace'],
-\ 'ruby': ['remove_trailing_lines', 'trim_whitespace'],
+\ 'ruby': ['remove_trailing_lines', 'trim_whitespace', 'rubocop'],
 \ 'rspec': ['remove_trailing_lines', 'trim_whitespace'],
 \ 'c': ['remove_trailing_lines', 'trim_whitespace'],
 \}

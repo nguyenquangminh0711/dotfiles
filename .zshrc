@@ -68,6 +68,7 @@ fi
 
 ## History Setup
 ZSH_DISABLE_COMPFIX=true
+export HISTIGNORE='pwd:exit:fg:bg:top:clear:history:ls:uptime:df:irb:bundle:vim:nvim'
 [ -z "$HISTFILE" ] && HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000000
 SAVEHIST=10000000
