@@ -28,6 +28,7 @@ Plug 'mhinz/vim-signify'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'eugen0329/vim-esearch'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'posva/vim-vue'
 Plug 'google/vim-jsonnet'
 Plug 'yegappan/mru'
 Plug 'hrsh7th/nvim-compe'
@@ -63,6 +64,7 @@ if has("autocmd")
   autocmd FileType jsonnet set tabstop=2 shiftwidth=2 softtabstop=2
   autocmd FileType ruby set tabstop=2 shiftwidth=2 softtabstop=2
   autocmd FileType python set tabstop=2 shiftwidth=2 softtabstop=2
+  autocmd FileType vue set tabstop=2 shiftwidth=2 softtabstop=2
   autocmd FileType go set tabstop=8 shiftwidth=8 softtabstop=8
   autocmd FileType c set tabstop=4 shiftwidth=4 softtabstop=4
   autocmd BufEnter * autocmd! matchparen
@@ -92,6 +94,8 @@ local nvim_lsp = require('lspconfig')
 require'lspconfig'.solargraph.setup{}
 require'lspconfig'.gopls.setup{}
 require'lspconfig'.jedi_language_server.setup{}
+require'lspconfig'.vuels.setup{}
+require'lspconfig'.tsserver.setup{}
 
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
