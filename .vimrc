@@ -34,6 +34,9 @@ Plug 'yegappan/mru'
 Plug 'hrsh7th/nvim-compe'
 Plug 'neovim/nvim-lspconfig'
 Plug 'dense-analysis/ale'
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
 call plug#end()
 "========================================================
 " EDITOR CONFIGS
@@ -87,8 +90,31 @@ let g:lightline = {
       \ }
       \ }
 "========================================================
+" CONFIG TELESCOPE
+"========================================================
+lua <<EOF
+local actions = require('telescope.actions')
+-- Global remapping
+------------------------------
+require('telescope').setup{
+  defaults = {
+    layout_strategy = "flex",
+    mappings = {
+      i = {
+        ["<C-n>"] = false
+      },
+      n = {
+        ["<esc>"] = actions.close
+      },
+    },
+  }
+}
+EOF
 " CONFIG LSP
 "========================================================
+map gj <Nop>
+map gx <Nop>
+map gv <Nop>
 lua <<EOF
 local nvim_lsp = require('lspconfig')
 require'lspconfig'.solargraph.setup{}
@@ -105,10 +131,11 @@ local on_attach = function(client, bufnr)
 
   buf_set_keymap('n', 'gh', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
   buf_set_keymap('n', 'gj', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  buf_set_keymap('n', 'gn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap("n", "gf", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  buf_set_keymap('n', 'gx', ':sp<CR><Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', 'gv', ':vsp<CR><Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', 'gr', ":lua require'telescope.builtin'.lsp_references{}<CR>", opts)
+  buf_set_keymap('n', 'gi', ":lua require'telescope.builtin'.lsp_implementations{}<CR>", opts)
+  buf_set_keymap('n', 'ga', ":lua require'telescope.builtin'.lsp_code_actions{}<CR>", opts)
 end
 
 local servers = { "jedi_language_server", "rust_analyzer", "tsserver" , "gopls", "solargraph"}

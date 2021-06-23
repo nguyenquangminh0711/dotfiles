@@ -128,3 +128,5 @@ git config --global core.excludesfile ~/.gitignore_global
   - Setup Github public key
   - https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification
   - Force commit sign at  https://gist.github.com/alopresto/b8d940197b4c314e27188a6852198d2d
+
+- Install https://github.com/so-fancy/diff-so-fancy
