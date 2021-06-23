@@ -96,11 +96,20 @@ let g:lightline = {
 "========================================================
 lua <<EOF
 local actions = require('telescope.actions')
+local layout_strategies = require('telescope.pickers.layout_strategies')
 -- Global remapping
 ------------------------------
 require('telescope').setup{
   defaults = {
-    layout_strategy = "flex",
+    layout_strategy = "myFlex",
+    layout_defaults = {
+      vertical = {
+        preview_height = 0.5,
+      },
+      myFlex = {
+        flip_columns = 130
+      }
+    },
     mappings = {
       i = {
         ["<C-n>"] = false
@@ -111,6 +120,23 @@ require('telescope').setup{
     },
   }
 }
+
+local config = require('telescope.config')
+layout_strategies.myFlex = function(self, max_columns, max_lines)
+  local layout_config = self.layout_config or {}
+
+  local flip_columns = layout_config.flip_columns or (config.values.layout_defaults or {})['flip_columns'] or 100
+  local flip_lines = layout_config.flip_lines or (config.values.layout_defaults or {})['flip_lines'] or 20
+
+  if max_columns < flip_columns and max_lines > flip_lines then
+    -- TODO: This feels a bit like a hack.... cause you wouldn't be able to pass this to flex easily.
+    self.layout_config = (config.values.layout_defaults or {})['vertical']
+    return layout_strategies.vertical(self, max_columns, max_lines)
+  else
+    self.layout_config = (config.values.layout_defaults or {})['horizontal']
+    return layout_strategies.horizontal(self, max_columns, max_lines)
+  end
+end
 EOF
 
 lua <<EOF
