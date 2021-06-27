@@ -92,13 +92,11 @@ let g:lightline = {
       \ }
       \ }
 "========================================================
-" CONFIG TELESCOPE
+" CONFIG TELESCOPE GENERAL
 "========================================================
 lua <<EOF
 local actions = require('telescope.actions')
 local layout_strategies = require('telescope.pickers.layout_strategies')
--- Global remapping
-------------------------------
 require('telescope').setup{
   defaults = {
     layout_strategy = "flex",
@@ -125,11 +123,11 @@ require('telescope').setup{
   }
 }
 EOF
-
+"========================================================
+" CONFIG TELESCOPE DIFF
+"========================================================
 lua <<EOF
 local finders = require('telescope.finders')
-local actions = require('telescope.actions')
-local action_state = require('telescope.actions.state')
 local make_entry = require('telescope.make_entry')
 local previewers = require('telescope.previewers')
 local utils = require('telescope.utils')
@@ -201,22 +199,71 @@ function _G.git_diff(opts)
     prompt_title = 'Git diff',
     finder = initial_finder,
     previewer = git_file_diff.new(opts),
-    sorter = conf.file_sorter(opts),
-    attach_mappings = function(prompt_bufnr, map)
-      actions.git_staging_toggle:enhance {
-        post = function()
-          action_state.get_current_picker(prompt_bufnr):refresh(gen_new_finder(), { reset_prompt = true })
-        end,
-      }
-
-      map('i', '<tab>', actions.git_staging_toggle)
-      map('n', '<tab>', actions.git_staging_toggle)
-      return true
-    end
+    sorter = conf.file_sorter(opts)
   }):find()
 end
 EOF
 nnoremap <silent> <C-d> <ESC>:call v:lua.git_diff({})<CR>
+"========================================================
+" CONFIG TELESCOPE RECENT FILES
+"========================================================
+lua <<EOF
+local finders = require('telescope.finders')
+local make_entry = require('telescope.make_entry')
+local pickers = require('telescope.pickers')
+local conf = require('telescope.config').values
+local putils = require('telescope.previewers.utils')
+
+function _G.recent_files(opts)
+  local gen_new_finder = function()
+    local output = vim.api.nvim_eval('FilterOldfiles(getcwd())')
+
+    return finders.new_table {
+      results = output,
+      entry_maker = make_entry.gen_from_file(opts)
+    }
+  end
+
+  local initial_finder = gen_new_finder()
+  if not initial_finder then return end
+
+  pickers.new(opts, {
+    prompt_title = 'Recent files',
+    finder = initial_finder,
+    previewer = conf.file_previewer(opts),
+    sorter = conf.file_sorter(opts)
+  }):find()
+end
+EOF
+" Search recent files
+function! FilterOldfiles(path_prefix) abort
+  let path_prefix = '\V'. escape(a:path_prefix, '\')
+  let counter     = 30
+  let entries     = {}
+  let oldfiles    = []
+
+  for fname in MruGetFiles()
+    if counter <= 0
+      break
+    endif
+
+    let absolute_path = resolve(fname)
+    " filter duplicates, bookmarks and entries from the skiplist
+    if has_key(entries, absolute_path)
+          \ || !filereadable(absolute_path)
+          \ || match(absolute_path, path_prefix)
+      continue
+    endif
+    let relative_path = fnamemodify(absolute_path, ":~:.")
+
+    let entries[absolute_path]  = 1
+    let counter                -= 1
+    let oldfiles += [relative_path]
+  endfor
+
+  return oldfiles
+endfunction
+nnoremap <silent> <C-r> <ESC>:call v:lua.recent_files({})<CR>
 "========================================================
 " CONFIG LSP
 "========================================================
@@ -330,47 +377,6 @@ function! FzfFloatingWindow()
         \ norelativenumber
         \ signcolumn=no
 endfunction
-
-" Search recent files
-function! FilterOldfiles(path_prefix) abort
-  let path_prefix = '\V'. escape(a:path_prefix, '\')
-  let counter     = 30
-  let entries     = {}
-  let oldfiles    = []
-
-  for fname in MruGetFiles()
-    if counter <= 0
-      break
-    endif
-
-    let absolute_path = resolve(fname)
-    " filter duplicates, bookmarks and entries from the skiplist
-    if has_key(entries, absolute_path)
-          \ || !filereadable(absolute_path)
-          \ || match(absolute_path, path_prefix)
-      continue
-    endif
-    let relative_path = fnamemodify(absolute_path, ":~:.")
-
-    let entries[absolute_path]  = 1
-    let counter                -= 1
-    let oldfiles += [relative_path]
-  endfor
-
-  return oldfiles
-endfunction
-
-function! FzfRecentFiles()
-  return fzf#run(fzf#wrap({
-        \ 'source': FilterOldfiles(getcwd()),
-        \ 'options': [
-        \ '-m', '--header-lines', !empty(expand('%')),
-        \ '--prompt', 'Recent files> ',
-        \ "--preview", "bat {} --color=always --style=plain",
-        \ '--preview-window', 'down:50%'
-        \ ]}))
-endfunction
-noremap <silent> <c-r> <ESC>:call FzfRecentFiles()<CR>
 
 " Search files
 let g:fzf_preview_source=" --preview='bat {} --color=always --style=plain' --preview-window down:50%"
