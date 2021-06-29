@@ -123,6 +123,7 @@ require('telescope').setup{
   }
 }
 EOF
+nnoremap <c-p> <cmd>Telescope find_files<cr>
 "========================================================
 " CONFIG TELESCOPE DIFF
 "========================================================
@@ -377,10 +378,6 @@ function! FzfFloatingWindow()
         \ norelativenumber
         \ signcolumn=no
 endfunction
-
-" Search files
-let g:fzf_preview_source=" --preview='bat {} --color=always --style=plain' --preview-window down:50%"
-noremap <silent> <c-p> <ESC>:call fzf#vim#files('.', {'options': g:fzf_preview_source})<CR>
 
 " A backup searcher for esearch
 let g:fzf_preview_window = ['down:50%', 'ctrl-/']
