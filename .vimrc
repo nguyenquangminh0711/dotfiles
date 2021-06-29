@@ -37,7 +37,6 @@ Plug 'dense-analysis/ale'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
-Plug 'sindrets/diffview.nvim'
 call plug#end()
 "========================================================
 " EDITOR CONFIGS
@@ -96,12 +95,14 @@ let g:lightline = {
 "========================================================
 lua <<EOF
 local actions = require('telescope.actions')
+local sorters = require('telescope.sorters')
 local layout_strategies = require('telescope.pickers.layout_strategies')
 require('telescope').setup{
   defaults = {
     initial_mode = "insert",
     layout_strategy = "flex",
     sorting_strategy = "ascending",
+    file_sorter = sorters.get_fzy_sorter,
     layout_defaults = {
       vertical = {
         preview_height = 0.5,
