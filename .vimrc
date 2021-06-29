@@ -484,6 +484,7 @@ nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
 nmap <silent> <leader>path :let @+ = expand("%")<cr>
 
 " Auto pair
+let g:endwise_no_mappings = 1
 let g:AutoPairsMultilineClose = 0
 let vim_markdown_preview_github=1
 let g:move_key_modifier = 'C'
