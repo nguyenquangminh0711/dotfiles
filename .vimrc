@@ -69,6 +69,7 @@ if has("autocmd")
   autocmd FileType ruby set tabstop=2 shiftwidth=2 softtabstop=2
   autocmd FileType vue set tabstop=2 shiftwidth=2 softtabstop=2
   autocmd FileType python set tabstop=4 shiftwidth=4 softtabstop=4
+  autocmd FileType proto set tabstop=2 shiftwidth=2 softtabstop=2
   autocmd FileType go set tabstop=8 shiftwidth=8 softtabstop=8
   autocmd FileType c set tabstop=4 shiftwidth=4 softtabstop=4
   autocmd BufEnter * autocmd! matchparen
