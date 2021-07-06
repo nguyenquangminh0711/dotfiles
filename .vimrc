@@ -69,7 +69,7 @@ if has("autocmd")
   autocmd FileType vue set tabstop=2 shiftwidth=2 softtabstop=2
   autocmd FileType python set tabstop=4 shiftwidth=4 softtabstop=4
   autocmd FileType proto set tabstop=2 shiftwidth=2 softtabstop=2
-  autocmd FileType go set tabstop=8 shiftwidth=8 softtabstop=8
+  autocmd FileType go set tabstop=4 shiftwidth=4 softtabstop=4
   autocmd FileType c set tabstop=4 shiftwidth=4 softtabstop=4
   autocmd BufEnter * autocmd! matchparen
 endif
@@ -164,7 +164,8 @@ local git_file_diff = defaulter(function(opts)
           bufname = self.state.bufname
         })
       else
-        putils.job_maker({ 'git', '--no-pager', 'diff', 'master..HEAD', '--', entry.value }, self.state.bufnr, {
+        local branch = opts.branch or 'master'
+        putils.job_maker({ 'git', '--no-pager', 'diff', branch..'..HEAD', '--', entry.value }, self.state.bufnr, {
           value = entry.value,
           bufname = self.state.bufname,
           cwd = opts.cwd
@@ -175,7 +176,7 @@ local git_file_diff = defaulter(function(opts)
   }
 end, {})
 
-function _G.git_diff(opts)
+function git_diff(opts)
   if opts.cwd then
     opts.cwd = vim.fn.expand(opts.cwd)
   else
@@ -183,7 +184,8 @@ function _G.git_diff(opts)
   end
 
   local gen_new_finder = function()
-    local git_cmd = {'git', 'merge-base', 'HEAD', 'master'}
+    local branch = opts.branch or 'master'
+    local git_cmd = {'git', 'merge-base', 'HEAD', branch}
     local output = utils.get_os_command_output(git_cmd, opts.cwd)
 
     if table.getn(output) == 0 then
@@ -215,8 +217,10 @@ function _G.git_diff(opts)
     sorter = conf.file_sorter(opts)
   }):find()
 end
+local builtin = require('telescope.builtin')
+builtin.git_diff = git_diff
 EOF
-nnoremap <silent> <C-d> <ESC>:call v:lua.git_diff({})<CR>
+nnoremap <silent> <C-d> <ESC>:Telescope git_diff<CR>
 "========================================================
 " CONFIG TELESCOPE RECENT FILES
 "========================================================
