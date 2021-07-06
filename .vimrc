@@ -11,7 +11,6 @@ Plug 'tomtom/tcomment_vim'
 Plug 'mg979/vim-visual-multi'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
-Plug 'tpope/vim-endwise'
 Plug 'mbbill/undotree'
 Plug 'janko-m/vim-test'
 Plug 'junegunn/vim-easy-align'
@@ -136,7 +135,7 @@ require('telescope').setup{
   }
 }
 EOF
-nnoremap <c-p> <cmd>Telescope find_files<cr>
+nnoremap <c-p> <cmd>Telescope find_files find_command=rg,--ignore,--hidden,--files<cr>
 "========================================================
 " CONFIG TELESCOPE DIFF
 "========================================================
@@ -438,10 +437,12 @@ let g:esearch.win_map = [
  \ ['n', '<cr>', '<plug>(esearch-win-open)'],
  \ ['n', '<esc>', ':q!<cr>']
  \]
-nmap <silent> <leader>ff <plug>(esearch)
 
 highlight link esearchLineNr Comment
 highlight link esearchCursorLineNr esearchFilename
+
+" nmap <silent> <leader>ff <plug>(esearch)
+nnoremap <silent> <leader>ff <cmd>Telescope live_grep<cr>
 "========================================================
 " CONFIG NERDTree
 "========================================================
