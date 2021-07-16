@@ -6,6 +6,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'tyrannicaltoucan/vim-deep-space'
 Plug 'itchyny/lightline.vim'
 Plug 'scrooloose/nerdtree'
+Plug 'ryanoasis/vim-devicons'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'tomtom/tcomment_vim'
 Plug 'mg979/vim-visual-multi'
@@ -36,6 +37,8 @@ Plug 'dense-analysis/ale'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
+Plug 'TimUntersberger/neogit'
+Plug 'sindrets/diffview.nvim'
 call plug#end()
 "========================================================
 " EDITOR CONFIGS
@@ -140,6 +143,17 @@ nnoremap <c-p> <cmd>Telescope find_files find_command=rg,--ignore,--hidden,--fil
 " CONFIG TELESCOPE DIFF
 "========================================================
 lua <<EOF
+local neogit = require('neogit')
+
+neogit.setup {
+  integrations = {
+    diffview = true
+  }
+}
+EOF
+nnoremap <silent> <c-g> <ESC>:Neogit<CR>
+
+lua <<EOF
 local finders = require('telescope.finders')
 local make_entry = require('telescope.make_entry')
 local previewers = require('telescope.previewers')
@@ -220,7 +234,20 @@ end
 local builtin = require('telescope.builtin')
 builtin.git_diff = git_diff
 EOF
-nnoremap <silent> <C-d> <ESC>:Telescope git_diff<CR>
+nnoremap <silent> <c-d> <ESC>:Telescope git_diff<CR>
+
+lua <<EOF
+local diffview = require('diffview')
+local io = require 'io'
+
+function _G.detail_diff()
+  local output = vim.fn.system('git merge-base HEAD master')
+  diffview.open(vim.trim(output))
+end
+EOF
+nnoremap <silent> <leader>do <ESC>:call v:lua.detail_diff()<CR>
+nnoremap <silent> <leader>dd <ESC>:DiffviewOpen<CR>
+nnoremap <silent> <leader>dc <ESC>:DiffviewClose<CR>
 "========================================================
 " CONFIG TELESCOPE RECENT FILES
 "========================================================
@@ -454,6 +481,7 @@ noremap <silent> <leader>nt <ESC>:NERDTreeToggle<CR>
 noremap <silent> <leader>rev <ESC>:NERDTreeFind<CR>
 let NERDTreeMapOpenSplit = 'x'
 let NERDTreeMapOpenVSplit = 'v'
+let g:NERDTreeWinSize=50
 "========================================================
 " CONFIG RSPEC
 "========================================================
